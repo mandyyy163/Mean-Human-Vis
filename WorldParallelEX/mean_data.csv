@@ -1,4 +1,4 @@
-Entity,Code,Mean male height (cm),Mean female height (cm),Mean BMI (kg/m²) (age-standardized estimate) - Sex: male - Age group: 18+  years of age,Mean BMI (kg/m²),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population)
+Entity,Code,Mean male height (cm),Mean female height (cm),Mean BMI (kg/m) (age-standardized estimate) - Sex: male - Age group: 18+  years of age,Mean BMI (kg/m),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population)
 Afghanistan,AFG,165.31921319,155.31242386,22.6,24.1,59.12690224,24.10000000000000
 Albania,ALB,173.6347157,161.86684566,27,26.3,76.39089034,10.80000000000000
 Algeria,DZA,170.71608252,159.25282423,24.7,26.4,75.97765182,18.30000000000000

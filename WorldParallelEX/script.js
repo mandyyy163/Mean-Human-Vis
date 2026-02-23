@@ -8,6 +8,16 @@ function unpack(rows, key) {
 // Matcha sidans grå look i själva plot-ytan också
 const PLOT_BG = "#cfcfcf";
 
+// parse number or return null
+function num(v) {
+  if (v === undefined || v === null) return null;
+  const s = String(v).trim();
+  if (s === "" || s === "NA" || s === "NaN") return null;
+  const x = Number(s);
+  return Number.isFinite(x) ? x : null;
+}
+
+
   // world map code from plotly
 d3.csv(
   "https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv",
@@ -110,58 +120,71 @@ var scatterLayout = {
 Plotly.newPlot("scatterDiv", [trace1, trace2, trace3], scatterLayout, { responsive: true });
 
 // parallel coordinates code from plotly
-d3.csv("https://raw.githubusercontent.com/bcdunbar/datasets/master/iris.csv", function (err, rows) {
-  if (err) {
-    console.error("CSV load error:", err);
-    return;
-  }
+d3.csv( "mean_data.csv", function (err, rows) {
+    if (err) {
+      console.error("CSV load error:", err);
+      return;
+    }
 
-  var parData = [
-    {
-      type: "parcoords",
-      line: {
-        color: unpack(rows, "species_id").map(Number),
-        colorscale: [
-          [0, "red"],
-          [0.5, "green"],
-          [1, "blue"],
-        ],
-      },
-      dimensions: [
-        {
-          range: [2, 4.5],
-          label: "sepal_width",
-          values: unpack(rows, "sepal_width").map(Number),
-        },
-        {
-          constraintrange: [5, 6],
-          range: [4, 8],
-          label: "sepal_length",
-          values: unpack(rows, "sepal_length").map(Number),
-        },
-        {
-          label: "petal_width",
-          range: [0, 2.5],
-          values: unpack(rows, "petal_width").map(Number),
-        },
-        {
-          label: "petal_length",
-          range: [1, 7],
-          values: unpack(rows, "petal_length").map(Number),
-        },
+  // Normalize and convert fields
+  // [""] är den texten som är i csv filen
+  const data = rows.map((r) => ({
+    Entity: r["Entity"],
+    Code: r["Code"],
+
+    male_h: num(r["Mean male height (cm)"]),
+    female_h: num(r["Mean female height (cm)"]),
+
+    male_bmi: num(
+      r["Mean BMI (kg/m) (age-standardized estimate) - Sex: male - Age group: 18+  years of age"]
+    ),
+    mean_bmi: num(r["Mean BMI (kg/m)"]),
+
+    life: num(r["Life expectancy at birth (years)"]),
+    traffic: num(r["Road traffic mortality rate (per 100 000 population)"]),
+  }));
+
+// parallel coordinates code from plotly
+const parRows = data.filter(d =>
+  d.male_h !== null ||
+  d.female_h !== null ||
+  d.male_bmi !== null ||
+  d.mean_bmi !== null ||
+  d.life !== null ||
+  d.traffic !== null
+);
+
+const parColor = parRows.map(d => d.life); //om färgen ska vara liknande som  life expectancy mape
+
+const parData = [
+  {
+    type: "parcoords",  //om färgen ska vara liknande som life expectancy mapen, annars kan  den vara helt blå
+    line: {
+      color: parColor,
+      colorscale: [
+        [0.0, "#b2182b"], 
+        [0.5, "#fddbc7"],  
+        [1.0, "#1a9641"], 
       ],
+      cmin: 50,
+      cmax: 85,
     },
-  ];
+    dimensions: [
+      { label: "Male height (cm)", values: parRows.map(d => d.male_h) },
+      { label: "Female height (cm)", values: parRows.map(d => d.female_h) },
+      { label: "Male BMI", values: parRows.map(d => d.male_bmi) },
+      { label: "Mean BMI", values: parRows.map(d => d.mean_bmi) },
+      { label: "Life exp (years)", values: parRows.map(d => d.life) },
+      { label: "Traffic /100k", values: parRows.map(d => d.traffic) },
+    ],
+  },
+];
 
-  var parLayout = {
-    title: { 
-      text: "Parallel Coordinates",
-      font: { size: 14 } 
-    },
-    margin: { t: 50, r: 30, b: 30, l: 30 },
-    paper_bgcolor: PLOT_BG,
-    plot_bgcolor: PLOT_BG,
-  };
+const parLayout = {
+  margin: { t: 60, r: 30, b: 30, l: 42 },
+  paper_bgcolor: PLOT_BG,
+  plot_bgcolor: PLOT_BG,
+};
 
-  Plotly.newPlot("parDiv", parData, parLayout, { responsive: true });
+Plotly.newPlot("parDiv", parData, parLayout, { responsive: true });
 });
