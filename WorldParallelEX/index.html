@@ -26,7 +26,13 @@
         width: 100vw;
       }
 
-      #mapDiv, #parDiv {
+      .panel {
+        flex: 1;
+        min-width: 0;
+        display:flex;
+      }
+
+      #mapDiv, #parDiv, #scatterDiv {
         width: 100%;
         height: 100%;
       }
@@ -41,9 +47,9 @@
       </div>
       <div class="panel">
         <div id="parDiv"></div>
-          <div class="panel">
-            <div id="scatterDiv"></div>
-          </div>
+      </div>
+      <div class="panel">
+        <div id="scatterDiv"></div>
       </div>
     </div>
 

@@ -1,4 +1,4 @@
-// run: python -m http.server 8000
+// run: python3 -m http.server 8000
 // open: http://localhost:8000/
 
 function unpack(rows, key) {
@@ -57,17 +57,6 @@ function unpack(rows, key) {
       Plotly.newPlot("mapDiv", mapData, mapLayout, { responsive: true });
     }
   );
-
-  var scatterData = [{              //ÄNDRA TILL VÅR DATA
-    x: [0, 1, 2, 3, 4],
-    y: [0, 1, 4, 9, 16],
-    mode: "markers",
-    type: "scatter",
-    marker: {size: 10},
-  },
-];
-
-Plotly.newPlot("scatterDiv", scatterData, scatterLayout, {responsive: true});
   
   // parallel coordinates code from plotly
   d3.csv("https://raw.githubusercontent.com/bcdunbar/datasets/master/iris.csv", function (err, rows) { // ÄNDRA TILL VÅRT DATA!!
@@ -119,3 +108,41 @@ Plotly.newPlot("scatterDiv", scatterData, scatterLayout, {responsive: true});
   
     Plotly.newPlot("parDiv", parData, parLayout, { responsive: true });
   });
+
+  //scatter plot hovering with lable, from plotly
+  d3.csv("https://raw.githubusercontent.com/bcdunbar/datasets/master/iris.csv", function (err, rows) { // ÄNDRA TILL VÅRT DATA!!
+    if (err) {
+      console.error("CSV load error:", err);
+      return;
+    }
+
+  var trace1 = {
+    x: [1, 2, 3, 4, 5],
+    y: [1, 6, 3, 6, 1],
+    mode: 'markers',
+    type: 'scatter',
+    name: 'Team A',
+    text: ['A-1', 'A-2', 'A-3', 'A-4', 'A-5'],
+    marker: { size: 12 }
+  };
+
+var trace2 = {
+  x: [1.5, 2.5, 3.5, 4.5, 5.5],
+  y: [4, 1, 7, 1, 4],
+  mode: 'markers',
+  type: 'scatter',
+  name: 'Team B',
+  text: ['B-a', 'B-b', 'B-c', 'B-d', 'B-e'],
+  marker: { size: 12 }
+};
+
+var scatterData = [trace1, trace2]
+
+var scatterLayout = {
+  xaxis: {range: [0.75, 5.25]},
+  yaxis: {range: [0, 8]},
+};
+
+  Plotly.newPlot("scatterDiv", scatterData, scatterLayout, {responsive: true});
+});
+
