@@ -57,6 +57,17 @@ function unpack(rows, key) {
       Plotly.newPlot("mapDiv", mapData, mapLayout, { responsive: true });
     }
   );
+
+  var scatterData = [{              //ÄNDRA TILL VÅR DATA
+    x: [0, 1, 2, 3, 4],
+    y: [0, 1, 4, 9, 16],
+    mode: "markers",
+    type: "scatter",
+    marker: {size: 10},
+  },
+];
+
+Plotly.newPlot("scatterDiv", scatterData, scatterLayout, {responsive: true});
   
   // parallel coordinates code from plotly
   d3.csv("https://raw.githubusercontent.com/bcdunbar/datasets/master/iris.csv", function (err, rows) { // ÄNDRA TILL VÅRT DATA!!
