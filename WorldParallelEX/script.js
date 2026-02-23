@@ -154,21 +154,9 @@ const parRows = data.filter(d =>
   d.traffic !== null
 );
 
-const parColor = parRows.map(d => d.life); //om färgen ska vara liknande som  life expectancy mape
-
 const parData = [
   {
-    type: "parcoords",  //om färgen ska vara liknande som life expectancy mapen, annars kan  den vara helt blå
-    line: {
-      color: parColor,
-      colorscale: [
-        [0.0, "#b2182b"], 
-        [0.5, "#fddbc7"],  
-        [1.0, "#1a9641"], 
-      ],
-      cmin: 50,
-      cmax: 85,
-    },
+    type: "parcoords",  // ENDAST BLÅ LINJER just nu
     dimensions: [
       { label: "Male height (cm)", values: parRows.map(d => d.male_h) },
       { label: "Female height (cm)", values: parRows.map(d => d.female_h) },
