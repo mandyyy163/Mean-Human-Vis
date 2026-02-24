@@ -134,58 +134,61 @@ d3.csv(
 });
 
 // parallel coordinates code from plotly
-d3.csv("https://raw.githubusercontent.com/bcdunbar/datasets/master/iris.csv", function (err, rows) {
+//parallel coordinate plot
+d3.csv( "mean_data.csv", function (err, rows) {
   if (err) {
     console.error("CSV load error:", err);
     return;
   }
 
-  var parData = [
-    {
-      type: "parcoords",
-      line: {
-        color: unpack(rows, "species_id").map(Number),
-        colorscale: [
-          [0, "red"],
-          [0.5, "green"],
-          [1, "blue"],
-        ],
-      },
-      dimensions: [
-        {
-          range: [2, 4.5],
-          label: "sepal_width",
-          values: unpack(rows, "sepal_width").map(Number),
-        },
-        {
-          constraintrange: [5, 6],
-          range: [4, 8],
-          label: "sepal_length",
-          values: unpack(rows, "sepal_length").map(Number),
-        },
-        {
-          label: "petal_width",
-          range: [0, 2.5],
-          values: unpack(rows, "petal_width").map(Number),
-        },
-        {
-          label: "petal_length",
-          range: [1, 7],
-          values: unpack(rows, "petal_length").map(Number),
-        },
-      ],
-    },
-  ];
+// Normalize and convert fields
+// [""] är den texten som är i csv filen
+const data = rows.map((r) => ({
+  Entity: r["Country"],
+  Code: r["Code"],
 
-  var parLayout = {
-    title: { 
-      text: "Parallel Coordinates",
-      font: { size: 14 } 
-    },
-    margin: { t: 50, r: 30, b: 30, l: 30 },
-    paper_bgcolor: PLOT_BG,
-    plot_bgcolor: PLOT_BG,
-  };
+  male_h: (r["Mean male height (cm)"]),
+  female_h: (r["Mean female height (cm)"]),
 
-  Plotly.newPlot("parDiv", parData, parLayout, { responsive: true });
+  male_bmi: (
+    r["Mean male BMI (kg/m_2)"]
+  ),
+  Female_bmi: (r["Mean female BMI (kg/m_2)"]),
+
+  life: (r["Life expectancy at birth (years)"]),
+  traffic: (r["Road traffic mortality rate (per 100 000 population)"]),
+
+  // Lägg till flera sen
+}));
+const parRows = data.filter(d =>
+  d.male_h !== null ||
+  d.female_h !== null ||
+  d.male_bmi !== null ||
+  d.Female_bmi !== null ||
+  d.life !== null ||
+  d.traffic !== null
+);
+
+const parData = [
+  {
+    type: "parcoords",  // ENDAST BLÅ LINJER just nu
+    dimensions: [
+      { label: "Male height (cm)", values: parRows.map(d => d.male_h) },
+      { label: "Female height (cm)", values: parRows.map(d => d.female_h) },
+      { label: "Male BMI", values: parRows.map(d => d.male_bmi) },
+      { label: "Female BMI", values: parRows.map(d => d.Female_bmi) },
+      { label: "Life exp (years)", values: parRows.map(d => d.life) },
+      { label: "Traffic /100k", values: parRows.map(d => d.traffic) },
+      //Lägg till flera sen
+    ],
+  },
+];
+
+const parLayout = {
+  margin: { t: 60, r: 30, b: 30, l: 42 },
+  paper_bgcolor: PLOT_BG,
+  plot_bgcolor: PLOT_BG,
+};
+
+Plotly.newPlot("parDiv", parData, parLayout, { responsive: true });
 });
