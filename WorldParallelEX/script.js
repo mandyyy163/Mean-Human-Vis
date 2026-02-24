@@ -8,21 +8,36 @@ function unpack(rows, key) {
 // Matcha sidans grå look i själva plot-ytan också
 const PLOT_BG = "#cfcfcf";
 
-  // world map code from plotly
+// world map + scatter using mean_data.csv
 d3.csv(
-  "https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv",
+  "mean_data.csv", 
   function (err, rows) {
     if (err) {
       console.error("CSV load error:", err);
       return;
     }
+  
+    //For eventlisteners
+  var mapSelect = document.getElementById("mapMetric");
+  var scatterSelect = document.getElementById("scatterMetric");
+
+  // Get the selected metrics or defaults
+  function getSelections() {
+    return {
+      mapMetric: mapSelect ? mapSelect.value : "Mean male height (cm)",
+      scatterMetric: scatterSelect ? scatterSelect.value : "Mean female height (cm)",
+    };
+  }
+
+  function drawMap(metric) {
+    var zValues = unpack(rows, metric).map(Number);
 
     var mapData = [
       {
         type: "choropleth",
-        locations: unpack(rows, "CODE"),
-        z: unpack(rows, "GDP (BILLIONS)"),
-        text: unpack(rows, "COUNTRY"),
+        locations: unpack(rows, "Code"),
+        z: zValues,
+        text: unpack(rows, "Country"),
         colorscale: [
           [0, "rgb(5, 10, 172)"],
           [0.35, "rgb(40, 60, 190)"],
@@ -35,79 +50,88 @@ d3.csv(
         reversescale: true,
         marker: { line: { color: "rgb(180,180,180)", width: 0.5 } },
         colorbar: {
-          autotick: false,
-          tickprefix: "$",
-          title: { text: "GDP<br>Billions US$" },
+          title: { text: metric },
         },
       },
     ];
 
     var mapLayout = {
       title: {
-        text:
-          '2014 Global GDP',
-        x: 0.5
+        text: metric,
+        x: 0.5,
       },
-    
       margin: { t: 60, r: 0, b: 0, l: 0 },
-    
       paper_bgcolor: PLOT_BG,
       plot_bgcolor: PLOT_BG,
-    
       geo: {
         domain: { x: [0, 1], y: [0, 1] },  // 🔥 fill 100% of div
         scope: "world",
         projection: {
         type: "natural earth",
-        scale: 1.55   
-      },
-      lonaxis: { range: [-180, 180] },
-      lataxis: { range: [-60, 90] },
+        scale: 1.55
+        },
+        lonaxis: { range: [-180, 180] },
+        lataxis: { range: [-60, 90] },
 
-      showframe: false,
-      showcoastlines: false,
-      showcountries: true,
-      bgcolor: PLOT_BG
-}
+        showframe: false,
+        showcoastlines: false,
+        showcountries: true,
+        bgcolor: PLOT_BG,
+      },
     };
 
-    Plotly.newPlot("mapDiv", mapData, mapLayout, { responsive: true });
+    Plotly.react("mapDiv", mapData, mapLayout, { responsive: true });
   }
-);
 
-// scatter plot code from plotly
-var trace1 = {
-  x: [1, 2, 3, 4],
-  y: [10, 15, 13, 17],
-  mode: "markers",
-  type: "scatter",
-};
+  function drawScatter(xMetric, yMetric) {
+    var xValues = unpack(rows, xMetric).map(Number);
+    var yValues = unpack(rows, yMetric).map(Number);
 
-var trace2 = {
-  x: [2, 3, 4, 5],
-  y: [16, 5, 11, 9],
-  mode: "lines",
-  type: "scatter",
-};
+    var scatterData = [
+      {
+        type: "scatter",
+        mode: "markers",
+        x: xValues,
+        y: yValues,
+        text: unpack(rows, "Country"),
+        marker: {
+          size: 6,
+          opacity: 0.8,
+        },
+      },
+    ];
 
-var trace3 = {
-  x: [1, 2, 3, 4],
-  y: [12, 9, 15, 12],
-  mode: "lines+markers",
-  type: "scatter",
-};
+    var scatterLayout = {
+      title: {
+        text: "Y:" + yMetric + "/ X:" +xMetric,
+        font: { size: 14 },
+      },
+      xaxis: { title: xMetric },
+      yaxis: { title: yMetric },
+      margin: { t: 50, r: 30, b: 40, l: 50 },
+      paper_bgcolor: PLOT_BG,
+      plot_bgcolor: PLOT_BG,
+    };
 
-var scatterLayout = {
-  title: { 
-    text: "Scatter Plot",
-    font: { size: 14 }
-  },
-  margin: { t: 50, r: 30, b: 40, l: 50 },
-  paper_bgcolor: PLOT_BG,
-  plot_bgcolor: PLOT_BG,
-};
+    Plotly.react("scatterDiv", scatterData, scatterLayout, { responsive: true });
+  }
 
-Plotly.newPlot("scatterDiv", [trace1, trace2, trace3], scatterLayout, { responsive: true });
+  drawMap(getSelections().mapMetric);
+  drawScatter(getSelections().mapMetric, getSelections().scatterMetric);
+
+  if (mapSelect) {
+    mapSelect.addEventListener("change", function () {
+      drawMap(getSelections().mapMetric);
+      drawScatter(getSelections().mapMetric, getSelections().scatterMetric);
+    });
+  }
+
+  if (scatterSelect) {
+    scatterSelect.addEventListener("change", function () {
+      drawScatter(getSelections().mapMetric, getSelections().scatterMetric);
+    });
+  }
+});
 
 // parallel coordinates code from plotly
 d3.csv("https://raw.githubusercontent.com/bcdunbar/datasets/master/iris.csv", function (err, rows) {
