@@ -1,4 +1,4 @@
-// run: python -m http.server 8000
+// run: python -m http.server 8000,    python3 -m http.server 8000
 // open: http://localhost:8000/
 function unpack(rows, key) {
   return rows.map(function (row) {
@@ -29,6 +29,45 @@ d3.csv(
     };
   }
 
+  //färgkod i choropleth map, en för varje attribut
+  const colorScales = {
+  "Mean male height (cm)": [
+    [0, "rgb(5, 10, 172)"],
+    [0.5, "rgb(70, 100, 245)"],
+    [1, "rgb(220, 220, 220)"],
+  ],
+
+  "Mean female height (cm)": [
+    [0, "rgb(0, 100, 0)"],
+    [0.5, "rgb(60, 179, 113)"],
+    [1, "rgb(220, 220, 220)"],
+  ],
+
+  "Mean male BMI (kg/m_2)": [
+    [0, "rgb(103, 66, 134)"],
+    [0.5, "rgb(211, 174, 224)"],
+    [1, "rgb(220, 220, 220)"],
+  ],
+
+  "Mean female BMI (kg/m_2)": [
+    [0, "rgb(158, 86, 122)"],
+    [0.5, "rgb(255, 170, 212)"],
+    [1, "rgb(220, 220, 220)"],
+  ],
+
+  "Life expectancy at birth (years)": [
+    [0, "rgb(1, 146, 124)"],
+    [0.5, "rgb(0, 255, 217)"],
+    [1, "rgb(220, 220, 220)"],
+  ],
+
+  "Road traffic mortality rate (per 100 000 population)": [
+    [0, "rgb(219, 120, 0)"],
+    [0.5, "rgb(255, 166, 0)"],
+    [1, "rgb(220, 220, 220)"],
+  ],
+};
+
   function drawMap(metric) {
     var zValues = unpack(rows, metric).map(Number);
 
@@ -38,14 +77,7 @@ d3.csv(
         locations: unpack(rows, "Code"),
         z: zValues,
         text: unpack(rows, "Country"),
-        colorscale: [
-          [0, "rgb(5, 10, 172)"],
-          [0.35, "rgb(40, 60, 190)"],
-          [0.5, "rgb(70, 100, 245)"],
-          [0.6, "rgb(90, 120, 245)"],
-          [0.7, "rgb(106, 137, 247)"],
-          [1, "rgb(220, 220, 220)"],
-        ],
+        colorscale: colorScales[metric],
         autocolorscale: false,
         reversescale: true,
         marker: { line: { color: "rgb(180,180,180)", width: 0.5 } },
