@@ -226,12 +226,13 @@ function updateScatterHoverOverlay() {
     [1]
   );
 }
+// Entity,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
 
 // parallel coordinate, draw, hover and brush filter
 // [""] är den texten som är i csv filen
 function buildParRowsFromAll() {
   parAllRows = rows_all.map((r) => ({
-    Entity: r["Country"],
+    Entity: r["Entity"],
     Code: r["Code"],
     male_h: r["Mean male height (cm)"],
     female_h: r["Mean female height (cm)"],
@@ -240,10 +241,21 @@ function buildParRowsFromAll() {
     life: r["Life expectancy at birth (years)"],
     traffic: r["Road traffic mortality rate (per 100 000 population)"],
          //lägg till flera
+    mortality: r["Mortality rate due to homicide (per 100 000 population)"],
+    alcohol: r["Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol)"],
+    doctors: r["Density of medical doctors (per 10 000 population)"],
+    tobacco: r["Age-standardized prevalence of tobacco use among persons 15 years and older  (%)"],
+    happines: r["Happiness - Life evaluation (3-year average)"],
+    costofliving: r["Cost of Living Index"],
+    incomeRatio: r["Price To Income Ratio"],
   }));
     // värden får inte vara null
-  parAllRows = parAllRows.filter((d) =>
-    [d.male_h, d.female_h, d.male_bmi, d.female_bmi, d.life, d.traffic].some((x) => x !== null && x !== undefined && x !== "")
+   // keep only rows that have at least one numeric value for the parcoords dimensions
+   parAllRows = parAllRows.filter((d) =>
+    [
+      d.male_h, d.female_h, d.male_bmi, d.female_bmi, d.life, d.traffic,
+      d.mortality, d.alcohol, d.doctors, d.tobacco, d.happines, d.costofliving, d.incomeRatio
+    ].some((x) => x !== null)
   );
 }
 // Apply map lasso selection to parAllRows, producing parRows, and rebuild Code->index mapping
@@ -281,6 +293,13 @@ function drawParcoords() {
         { label: "Life exp (years)", values: parRows.map((d) => Number(d.life)) },
         { label: "Traffic /100k", values: parRows.map((d) => Number(d.traffic)) },
         //lägg till flera
+        { label: "mortality /100k", values: parRows.map((d) => Number(d.mortality)) },
+        { label: "alcohol per capita", values: parRows.map((d) => Number(d.alcohol)) },
+        { label: "Doctors /10k", values: parRows.map((d) => Number(d.doctors)) },
+        { label: "tobacco (%)", values: parRows.map((d) => Number(d.tobacco)) },
+        { label: "Happiness rate", values: parRows.map((d) => Number(d.happines)) },
+        { label: "Cost of Living Index", values: parRows.map((d) => Number(d.costofliving)) },
+        { label: "price to income", values: parRows.map((d) => Number( d.incomeRatio))},
       ],
     },
   ];
@@ -570,7 +589,7 @@ function drawParcoords() {
   }
   
   //  CSV load
-  d3.csv("mean_data.csv", function (err, rows) {
+  d3.csv("mean_data_full.csv", function (err, rows) { //ändrade dataset
     if (err) {
       console.error("CSV load error:", err);
       return;
@@ -615,3 +634,5 @@ function drawParcoords() {
       });
     }
   });  
+
+  // Entity,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
