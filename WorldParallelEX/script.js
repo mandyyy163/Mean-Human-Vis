@@ -226,13 +226,13 @@ function updateScatterHoverOverlay() {
     [1]
   );
 }
-// Entity,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
+// Country,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
 
 // parallel coordinate, draw, hover and brush filter
 // [""] är den texten som är i csv filen
 function buildParRowsFromAll() {
   parAllRows = rows_all.map((r) => ({
-    Entity: r["Entity"],
+    Entity: r["Country"],
     Code: r["Code"],
     male_h: r["Mean male height (cm)"],
     female_h: r["Mean female height (cm)"],
@@ -293,7 +293,7 @@ function drawParcoords() {
         { label: "Life exp (years)", values: parRows.map((d) => Number(d.life)) },
         { label: "Traffic /100k", values: parRows.map((d) => Number(d.traffic)) },
         //lägg till flera
-        { label: "mortality /100k", values: parRows.map((d) => Number(d.mortality)) },
+        { label: "homicide /100k", values: parRows.map((d) => Number(d.mortality)) },
         { label: "alcohol per capita", values: parRows.map((d) => Number(d.alcohol)) },
         { label: "Doctors /10k", values: parRows.map((d) => Number(d.doctors)) },
         { label: "tobacco (%)", values: parRows.map((d) => Number(d.tobacco)) },
@@ -518,6 +518,48 @@ function drawParcoords() {
       [0.5, "rgb(255, 166, 0)"],
       [1, "rgb(220, 220, 220)"],
     ],
+
+    "Mortality rate due to homicide (per 100 000 population)": [
+      [0,   "rgb(120, 0, 20)"],
+      [0.5, "rgb(220, 60, 80)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol)": [
+      [0,   "rgb(55, 20, 90)"],
+      [0.5, "rgb(160, 110, 220)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Density of medical doctors (per 10 000 population)": [
+      [0,   "rgb(10, 60, 160)"],
+      [0.5, "rgb(90, 170, 255)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Age-standardized prevalence of tobacco use among persons 15 years and older  (%)": [
+      [0,   "rgb(90, 55, 25)"],
+      [0.5, "rgb(200, 160, 95)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Happiness - Life evaluation (3-year average)": [
+      [0,   "rgb(0, 90, 85)"],
+      [0.5, "rgb(120, 220, 200)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Cost of Living Index": [
+      [0,   "rgb(110, 0, 110)"],
+      [0.5, "rgb(220, 110, 220)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Price To Income Ratio": [
+      [0,   "rgb(60, 85, 0)"],
+      [0.5, "rgb(170, 210, 80)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
   };
   
   //Draw map
@@ -530,7 +572,7 @@ function drawParcoords() {
         type: "choropleth",
         locations: unpack(map_rows, "Code"),
         z: zValues,
-        text: unpack(map_rows, "Country"),
+        text: unpack(map_rows, "Country"), // country, first in the csv file
         colorscale: colorScales[metric],
         autocolorscale: false,
         reversescale: true,
@@ -635,4 +677,4 @@ function drawParcoords() {
     }
   });  
 
-  // Entity,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
+  // Country,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
