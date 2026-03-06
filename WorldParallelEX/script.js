@@ -257,6 +257,11 @@ function applyMapSelectionToParRows() {
 }
 // Draw the parallel coordinates plot
 function drawParcoords() {
+  
+  function parVal(v) {  // for paracoords, turn NaNs into nulls (looks like it's treated as 0's but doesn't adjust axes at least)
+    return Number.isFinite(v) ? v : null;
+  }
+
   applyMapSelectionToParRows();
   const initColors = new Array(parRows.length).fill(0); // default blue color on the lines
   const parData = [
@@ -274,12 +279,12 @@ function drawParcoords() {
         showscale: false,
       },
       dimensions: [
-        { label: "Male height (cm)", values: parRows.map((d) => Number(d.male_h)) },
-        { label: "Female height (cm)", values: parRows.map((d) => Number(d.female_h)) },
-        { label: "Male BMI", values: parRows.map((d) => Number(d.male_bmi)) },
-        { label: "Female BMI", values: parRows.map((d) => Number(d.female_bmi)) },
-        { label: "Life exp (years)", values: parRows.map((d) => Number(d.life)) },
-        { label: "Traffic /100k", values: parRows.map((d) => Number(d.traffic)) },
+        { label: "Male height (cm)", values: parRows.map((d) => parVal(d.male_h)) },
+        { label: "Female height (cm)", values: parRows.map((d) => parVal(d.female_h)) },
+        { label: "Male BMI", values: parRows.map((d) => parVal(d.male_bmi)) },
+        { label: "Female BMI", values: parRows.map((d) => parVal(d.female_bmi)) },
+        { label: "Life exp (years)", values: parRows.map((d) => parVal(d.life)) }, 
+        { label: "Traffic /100k", values: parRows.map((d) => parVal(d.traffic)) },
         //lägg till flera
       ],
     },
@@ -575,6 +580,21 @@ function drawParcoords() {
       console.error("CSV load error:", err);
       return;
     }
+
+    // cLean numeric values, convert empty to NaN
+    rows.forEach(function (r) {
+      Object.keys(r).forEach(function (key) {
+        if (key === "Country" || key === "Code") return;  //skip, not numeric
+        var raw = r[key];
+        if (raw === "" ) {
+          r[key] = NaN;                                 //set empty values to NaN
+        } else {
+          var v = Number(raw);
+          r[key] = isNaN(v) ? NaN : v;
+        }
+      });
+    });
+
     rows_all = rows;
     map_rows = rows;
     // Build parcoords base data once
