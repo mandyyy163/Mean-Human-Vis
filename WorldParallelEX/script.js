@@ -293,13 +293,13 @@ function drawParcoords() {
         { label: "Life exp (years)", values: parRows.map((d) => Number(d.life)) },
         { label: "Traffic /100k", values: parRows.map((d) => Number(d.traffic)) },
         //lägg till flera
-        { label: "homicide /100k", values: parRows.map((d) => Number(d.mortality)) },
-        { label: "alcohol per capita", values: parRows.map((d) => Number(d.alcohol)) },
+        { label: "Homicide /100k", values: parRows.map((d) => Number(d.mortality)) },
+        { label: "Alcohol /capita", values: parRows.map((d) => Number(d.alcohol)) },
         { label: "Doctors /10k", values: parRows.map((d) => Number(d.doctors)) },
-        { label: "tobacco (%)", values: parRows.map((d) => Number(d.tobacco)) },
+        { label: "Tobacco (%)", values: parRows.map((d) => Number(d.tobacco)) },
         { label: "Happiness rate", values: parRows.map((d) => Number(d.happines)) },
-        { label: "Cost of Living Index", values: parRows.map((d) => Number(d.costofliving)) },
-        { label: "price to income", values: parRows.map((d) => Number( d.incomeRatio))},
+        { label: "Cost of Living", values: parRows.map((d) => Number(d.costofliving)) },
+        { label: "Income ratio", values: parRows.map((d) => Number( d.incomeRatio))},
       ],
     },
   ];
@@ -308,6 +308,9 @@ function drawParcoords() {
     margin: { t: 60, r: 30, b: 30, l: 42 },
     paper_bgcolor: PLOT_BG,
     plot_bgcolor: PLOT_BG,
+    font: {
+      size: 7   // smaller label size
+    }
   };
 
   Plotly.react("parDiv", parData, parLayout, { responsive: true }).then(() => {
