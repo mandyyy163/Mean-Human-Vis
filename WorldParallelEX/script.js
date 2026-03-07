@@ -226,6 +226,7 @@ function updateScatterHoverOverlay() {
     [1]
   );
 }
+// Country,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
 
 // parallel coordinate, draw, hover and brush filter
 // [""] är den texten som är i csv filen
@@ -240,10 +241,21 @@ function buildParRowsFromAll() {
     life: r["Life expectancy at birth (years)"],
     traffic: r["Road traffic mortality rate (per 100 000 population)"],
          //lägg till flera
+    mortality: r["Mortality rate due to homicide (per 100 000 population)"],
+    alcohol: r["Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol)"],
+    doctors: r["Density of medical doctors (per 10 000 population)"],
+    tobacco: r["Age-standardized prevalence of tobacco use among persons 15 years and older  (%)"],
+    happines: r["Happiness - Life evaluation (3-year average)"],
+    costofliving: r["Cost of Living Index"],
+    incomeRatio: r["Price To Income Ratio"],
   }));
     // värden får inte vara null
-  parAllRows = parAllRows.filter((d) =>
-    [d.male_h, d.female_h, d.male_bmi, d.female_bmi, d.life, d.traffic].some((x) => x !== null && x !== undefined && x !== "")
+   // keep only rows that have at least one numeric value for the parcoords dimensions
+   parAllRows = parAllRows.filter((d) =>
+    [
+      d.male_h, d.female_h, d.male_bmi, d.female_bmi, d.life, d.traffic,
+      d.mortality, d.alcohol, d.doctors, d.tobacco, d.happines, d.costofliving, d.incomeRatio
+    ].some((x) => x !== null)
   );
 }
 // Apply map lasso selection to parAllRows, producing parRows, and rebuild Code->index mapping
@@ -286,6 +298,13 @@ function drawParcoords() {
         { label: "Life exp (years)", values: parRows.map((d) => parVal(d.life)) }, 
         { label: "Traffic /100k", values: parRows.map((d) => parVal(d.traffic)) },
         //lägg till flera
+        { label: "Homicide /100k", values: parRows.map((d) => Number(d.mortality)) },
+        { label: "Alcohol /capita", values: parRows.map((d) => Number(d.alcohol)) },
+        { label: "Doctors /10k", values: parRows.map((d) => Number(d.doctors)) },
+        { label: "Tobacco (%)", values: parRows.map((d) => Number(d.tobacco)) },
+        { label: "Happiness rate", values: parRows.map((d) => Number(d.happines)) },
+        { label: "Cost of Living", values: parRows.map((d) => Number(d.costofliving)) },
+        { label: "Income ratio", values: parRows.map((d) => Number( d.incomeRatio))},
       ],
     },
   ];
@@ -294,6 +313,9 @@ function drawParcoords() {
     margin: { t: 60, r: 30, b: 30, l: 42 },
     paper_bgcolor: PLOT_BG,
     plot_bgcolor: PLOT_BG,
+    font: {
+      size: 7   // smaller label size
+    }
   };
 
   Plotly.react("parDiv", parData, parLayout, { responsive: true }).then(() => {
@@ -504,6 +526,48 @@ function drawParcoords() {
       [0.5, "rgb(255, 166, 0)"],
       [1, "rgb(220, 220, 220)"],
     ],
+
+    "Mortality rate due to homicide (per 100 000 population)": [
+      [0,   "rgb(120, 0, 20)"],
+      [0.5, "rgb(220, 60, 80)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol)": [
+      [0,   "rgb(55, 20, 90)"],
+      [0.5, "rgb(160, 110, 220)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Density of medical doctors (per 10 000 population)": [
+      [0,   "rgb(10, 60, 160)"],
+      [0.5, "rgb(90, 170, 255)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Age-standardized prevalence of tobacco use among persons 15 years and older  (%)": [
+      [0,   "rgb(90, 55, 25)"],
+      [0.5, "rgb(200, 160, 95)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Happiness - Life evaluation (3-year average)": [
+      [0,   "rgb(0, 90, 85)"],
+      [0.5, "rgb(120, 220, 200)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Cost of Living Index": [
+      [0,   "rgb(110, 0, 110)"],
+      [0.5, "rgb(220, 110, 220)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
+
+    "Price To Income Ratio": [
+      [0,   "rgb(60, 85, 0)"],
+      [0.5, "rgb(170, 210, 80)"],
+      [1,   "rgb(220, 220, 220)"],
+    ],
   };
   
   //Draw map
@@ -516,7 +580,7 @@ function drawParcoords() {
         type: "choropleth",
         locations: unpack(map_rows, "Code"),
         z: zValues,
-        text: unpack(map_rows, "Country"),
+        text: unpack(map_rows, "Country"), // country, first in the csv file
         colorscale: colorScales[metric],
         autocolorscale: false,
         reversescale: true,
@@ -575,7 +639,7 @@ function drawParcoords() {
   }
   
   //  CSV load
-  d3.csv("mean_data.csv", function (err, rows) {
+  d3.csv("mean_data_full.csv", function (err, rows) { //ändrade dataset
     if (err) {
       console.error("CSV load error:", err);
       return;
@@ -635,3 +699,5 @@ function drawParcoords() {
       });
     }
   });  
+
+  // Country,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
