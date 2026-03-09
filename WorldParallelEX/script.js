@@ -20,12 +20,14 @@ d3.csv(
     //For eventlisteners
   var mapSelect = document.getElementById("mapMetric");
   var scatterSelect = document.getElementById("scatterMetric");
+  var bubbleSelect = document.getElementById("bubbleMetric");
 
   // Get the selected metrics or defaults
   function getSelections() {
     return {
       mapMetric: mapSelect ? mapSelect.value : "Mean male height (cm)",
       scatterMetric: scatterSelect ? scatterSelect.value : "Mean female height (cm)",
+      bubbleMetric: bubbleSelect ? bubbleSelect.value : "Mean female height (cm)",
     };
   }
 
@@ -136,7 +138,7 @@ d3.csv(
     var scatterLayout = {
       title: {
         text: "Y:" + yMetric + "/ X:" +xMetric,
-        font: { size: 14 },
+        font: { size: 12 },
       },
       xaxis: { title: xMetric },
       yaxis: { title: yMetric },
@@ -148,19 +150,66 @@ d3.csv(
     Plotly.react("scatterDiv", scatterData, scatterLayout, { responsive: true });
   }
 
+  function drawBubble(xMetric, yMetric, zMetric) {
+    var xValues = unpack(rows, xMetric).map(Number);
+    var yValues = unpack(rows, yMetric).map(Number);
+    var zValues = unpack(rows, zMetric).map(Number);
+
+    //normaliserar z värdena (storleken på bubblor i bubble chart
+    var minZ = Math.min(...zValues);
+    var maxZ = Math.min(...zValues);
+    var scaleSize =zValues.map(v => 10 + ((v - minZ)/(maxZ - minZ)) * 50);
+
+    var bubbleData = [
+      {
+        type: "scatter",
+        mode: "markers",
+        x: xValues,
+        y: yValues,
+        text: unpack(rows, "Country"),
+        marker: {
+          size: scaleSize,
+          sizemode: "area",
+          color: zValues,
+          opacity: 0.7,
+        }
+      }
+    ];
+
+    var bubbleLayout = {
+      title: {text: "X: " + xMetric + " / Y:" + yMetric + "Size: " + zMetric, font: {size: 12}},
+      xaxis: { title: xMetric },
+      yaxis: { title: yMetric },
+      margin: { t: 60, r: 30, b: 40, l: 60 },
+      paper_bgcolor: PLOT_BG,
+      plot_bgcolor: PLOT_BG
+    };
+    
+    Plotly.react("bubbleDiv", bubbleData, bubbleLayout, {responsive: true});
+  }
+
   drawMap(getSelections().mapMetric);
   drawScatter(getSelections().mapMetric, getSelections().scatterMetric);
+  drawBubble(getSelections().mapMetric, getSelections().scatterMetric, getSelections().bubbleMetric);
 
   if (mapSelect) {
     mapSelect.addEventListener("change", function () {
       drawMap(getSelections().mapMetric);
       drawScatter(getSelections().mapMetric, getSelections().scatterMetric);
+      drawBubble(getSelections().mapMetric, getSelections().scatterMetric, getSelections().bubbleMetric);
     });
   }
 
   if (scatterSelect) {
     scatterSelect.addEventListener("change", function () {
       drawScatter(getSelections().mapMetric, getSelections().scatterMetric);
+      drawBubble(getSelections().mapMetric, getSelections().scatterMetric, getSelections().bubbleMetric);
+    });
+  }
+
+  if (bubbleSelect) {
+    bubbleSelect.addEventListener("change", function () {
+      drawBubble(getSelections().mapMetric, getSelections().scatterMetric, getSelections().bubbleMetric);
     });
   }
 });
