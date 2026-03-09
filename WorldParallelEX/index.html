@@ -63,6 +63,10 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+
+        /* Scroll function*/
+        overflow-y: auto;
+        max-height: 100%;
       }
 
       .sidebar .dropdowns {
@@ -190,12 +194,31 @@
               <option value="Price To Income Ratio">Price To Income Ratio</option>
             </select>
           </div>
+          <div class="dropdowns">
+            <label for="bubbleMetric">Bubble attribute</label>
+            <select id="bubbleMetric">
+              <option value="Mean male height (cm)">Mean male height (cm)</option>
+              <option value="Mean female height (cm)">Mean female height (cm)</option>
+              <option value="Mean male BMI (kg/m_2)">Mean male BMI (kg/m²)</option>
+              <option value="Mean female BMI (kg/m_2)">Mean female BMI (kg/m²)</option>
+              <option value="Life expectancy at birth (years)">Life expectancy at birth (years)</option>
+              <option value="Road traffic mortality rate (per 100 000 population)">Road traffic mortality rate (per 100 000 population)</option>
+              <option value="Mortality rate due to homicide (per 100 000 population)">Mortality rate due to homicide (per 100 000 population)</option>
+              <option value="Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol)">Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol)</option>
+              <option value="Density of medical doctors (per 10 000 population)">Density of medical doctors (per 10 000 population)</option>
+              <option value="Age-standardized prevalence of tobacco use among persons 15 years and older  (%)">Age-standardized prevalence of tobacco use among persons 15 years and older  (%)</option>
+              <option value="Happiness - Life evaluation (3-year average)">Happiness - Life evaluation (3-year average)</option>
+              <option value="Cost of Living Index">Cost of Living Index</option>
+              <option value="Price To Income Ratio">Price To Income Ratio</option>
+            </select>
+          </div>
           <div class="sidebar-guide">
             <h3>How does this work?</h3>
             <ul>
               <li><strong>Map</strong><p> Pick a metric to color countries. Use the lasso to select countries; only selected ones show in the plots below.</p></li>
               <li><strong>Scatter plot</strong><p> X = map attribute, Y = scatter attribute.</p><p>Hover or select on the map or parallel plot to highlight the same country here.</p></li>
               <li><strong>Parallel coordinates plot</strong><p> Each line is a country. Drag on an axis to use the brush filtering tool. Filtering here also filters the other plots.</p> </li>
+              <li><strong>Bubble chart</strong><p> X = map attribute, Y = scatter attribute, Z = bubble attribute.</p> </strong></li>
             </ul>
             <p>Hovering a country in the map or the scatter plot highlights it in all three.</p>
             <h3>Data sources</h3>

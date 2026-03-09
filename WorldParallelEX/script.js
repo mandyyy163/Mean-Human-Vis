@@ -228,6 +228,59 @@ function updateScatterHoverOverlay() {
     [1]
   );
 }
+
+function scaleBubbleSize(value) {
+  return Math.sqrt(value) * 2;
+}
+
+// Bubble Chart
+function drawBubble() {
+  if (!map_rows.length) return;
+  
+  const vis = computeVisibleSet();
+  const filtered = [];
+  for (const r of map_rows) {
+    const code = r.Code;
+    if (!code) continue;
+    if (!vis || vis.has(code)) filtered.push(r);
+  }
+  const xValues = filtered.map(r => Number(r[current_map_metric]));
+  const yValues = filtered.map(r => Number(r[current_scatter_metric]));
+  const zValues = filtered.map(r => Number(r[current_bubble_metric]));
+  
+  const size = zValues.map(v => scaleBubbleSize(v));
+
+  const codes = filtered.map(r => r.Code);
+  const countries = filtered.map(r => r.Country);
+
+  const bubbleData = [{
+    type: "scatter",
+    mode: "markers",
+    x: xValues,
+    y: yValues,
+    text: countries,
+    customdata: codes,
+    marker: { size: size, sizemode: "diameter", opacity: 0.8},
+    hovertemplate:
+      "<b>%{text}</b><br>" + "X: %{x}<br>" + "Y: %{y}<br>" + "Size: %{marker.size}<extra></extra>",
+    showlegend: false
+    }
+  ];
+
+  const bubbleLayout = {
+    title: {text: "Y: " + current_scatter_metric + " / X: " + current_map_metric, font: {size: 12}},
+    xaxis: {title: current_map_metric},
+    yaxis: {title: current_scatter_metric},
+    paper_bgcolor: PLOT_BG,
+    plot_bgcolor: PLOT_BG
+  };
+
+  Plotly.react("bubbleDiv", bubbleData, bubbleLayout, {responsive: true}).then(() => {});
+}
+
+
+
+
 // Country,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
 
 // parallel coordinate, draw, hover and brush filter
@@ -670,16 +723,21 @@ function drawParcoords() {
         //For eventlisteners
     const mapSelect = document.getElementById("mapMetric");
     const scatterSelect = document.getElementById("scatterMetric");
+    const bubbleSelect = document.getElementById("bubbleMetric");
     // Get the selected metrics or defaults
     function getSelections() {
       current_map_metric = mapSelect ? mapSelect.value : current_map_metric;
       current_scatter_metric = scatterSelect ? scatterSelect.value : current_scatter_metric;
+      current_bubble_metric = bubbleSelect ? bubbleSelect.value : current_bubble_metric;
+
+      console.log("Valda attribut: ", current_map_metric, current_scatter_metric, current_bubble_metric);
     }
   
     // Initial draw
     getSelections();
     drawMap(current_map_metric);
     drawScatter();
+    drawBubble();
     drawParcoords();
   
     // Dropdown changes
@@ -690,6 +748,7 @@ function drawParcoords() {
         // Map metric affects map + scatter X
         drawMap(current_map_metric);
         drawScatter();
+        drawBubble();
       });
     }
   
@@ -698,7 +757,16 @@ function drawParcoords() {
         getSelections();
         clearHover();
         drawScatter();
+        drawBubble();
       });
+    }
+
+    if (bubbleSelect) {
+      bubbleSelect.addEventListener("change", () => {
+        getSelections();
+        clearHover();
+        drawBubble();
+      })
     }
   });  
 
