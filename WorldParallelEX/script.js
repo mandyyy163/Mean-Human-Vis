@@ -57,6 +57,7 @@ function setHover(code) {
   updateMapHoverOverlay();
   updateParcoordsHover();
   updateScatterHoverOverlay();
+  updateBubbleHoverOverlay();
 }
 // Clear hover state and remove hover highlighting from all plots
 function clearHover() {
@@ -64,6 +65,7 @@ function clearHover() {
   updateMapHoverOverlay();
   updateParcoordsHover();
   updateScatterHoverOverlay();
+  updateBubbleHoverOverlay();
 }
 // MAP filtering. selection values in the parallel coordinate plot, will filter/only show these countries on the map
 function updateMapFilter() {
@@ -177,7 +179,6 @@ function drawScatter() {
         size: 14,
         symbol: "diamond", //change here from diamond?? when hovering 
         opacity: 1,
-        line: { width: 2 },
       },
       hoverinfo: "skip",
       name: "Hover",
@@ -260,10 +261,27 @@ function drawBubble() {
     y: yValues,
     text: countries,
     customdata: codes,
-    marker: { size: size, sizemode: "diameter", opacity: 0.8},
+    marker: { size: size, sizemode: "diameter", opacity: 0.8, line: { width: 0.5}},
     hovertemplate:
       "<b>%{text}</b><br>" + "X: %{x}<br>" + "Y: %{y}<br>" + "Size: %{marker.size}<extra></extra>",
     showlegend: false
+    },
+
+    // The highlighter marker
+    {
+      type: "scatter",
+      mode: "markers",
+      x: [],
+      y: [],
+      text: [],
+      customdata: [],
+      marker: {
+        size: 16,
+        symbol: "circle",
+        opacity: 1,
+      },
+      hoverinfo: "skip",
+      showlegend: false
     }
   ];
 
@@ -275,10 +293,32 @@ function drawBubble() {
     plot_bgcolor: PLOT_BG
   };
 
-  Plotly.react("bubbleDiv", bubbleData, bubbleLayout, {responsive: true}).then(() => {});
+  Plotly.react("bubbleDiv", bubbleData, bubbleLayout, {responsive: true}).then(() => {
+    bubble_ready = true;
+    bindBubbleHoverHandlers();
+    updateBubbleHoverOverlay();
+  });
 }
 
+function updateBubbleHoverOverlay() {
+  if (!bubble_ready) return;
+  if (!hover_code) {
+    Plotly.restyle("bubbleDiv", { x: [[]], y: [[]], text: [[]], customdata: [[]] }, [1]);      
+    return;
+  }
+  const gd = document.getElementById("bubbleDiv");
+  const base = gd?.data?.[0];
+  if (!base || !base.customdata) return;
 
+  const idx = base.customdata.findIndex(c => c === hover_code);
+  if (idx === -1) {
+    Plotly.restyle("bubbleDiv", { x: [[]], y: [[]], text: [[]], customdata: [[]]}, [1]);
+    return;
+  }
+
+  Plotly.restyle(
+    "bubbleDiv", { x: [[base.x[idx]]], y: [[base.y[idx]]], text: [[base.text[idx]]], customdata: [[base.customdata[idx]]]}, [1]);
+}
 
 
 // Country,Code,Mean male height (cm),Mean female height (cm),Mean male BMI (kg/m_2),Mean female BMI (kg/m_2),Life expectancy at birth (years),Road traffic mortality rate (per 100 000 population),Mortality rate due to homicide (per 100 000 population),Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol),Density of medical doctors (per 10 000 population),Age-standardized prevalence of tobacco use among persons 15 years and older  (%),Happiness - Life evaluation (3-year average),Cost of Living Index,Price To Income Ratio
@@ -449,6 +489,7 @@ function drawParcoords() {
       ensureHoverStillValid();
       updateMapFilter();
       drawScatter();
+      drawBubble();
     });
   }
   // Plotly interaction handlers for the map (hover + lasso selection + double-click clear)
@@ -487,7 +528,8 @@ function drawParcoords() {
       // Rebuild parcoords & update map/scatter
       ensureHoverStillValid();
       updateMapFilter(); // update map
-      drawScatter(); // update scatter 
+      drawScatter(); // update scatter
+      drawBubble(); // updates bubble 
       drawParcoords(); // update parallel coordinate 
     });
   
@@ -499,6 +541,7 @@ function drawParcoords() {
       Plotly.restyle("mapDiv", { selectedpoints: [null] }, [0]); // ensure selection fade is fully cleared
       updateMapFilter();
       drawScatter();
+      drawBubble();
       drawParcoords();
     });
   }
@@ -544,6 +587,24 @@ function drawParcoords() {
       clearHover();
     });
   }
+
+  function bindBubbleHoverHandlers() {
+    const bubDiv = document.getElementById("bubbleDiv");
+    if (!bubDiv) return;
+    if (bubDiv.removeAllListeners) {
+      bubDiv.removeAllListeners("plotly_hover");
+      bubDiv.removeAllListeners("plotly_unhover");
+    }
+    bubDiv.on("plotly_hover", (ev) => {
+      const code = ev?.points?.[0]?.customdata;
+      if (code) setHover(code);
+    });
+
+    bubDiv.on("plotly_unhover", () => {
+      clearHover();
+    });
+  }
+
    //färgkod i choropleth map, en för varje attribut
    const colorScales = {
     "Mean male height (cm)": [
@@ -658,11 +719,11 @@ function drawParcoords() {
         zmin: 0,
         zmax: 1,
         colorscale: [
-          [0, "rgba(255,0,0,0.0)"],
-          [1, "rgba(255,0,0,0.85)"],
+          [0, "rgba(255, 255, 255, 0)"],
+          [1, "rgb(255, 89, 0)"],
         ],
         showscale: false,
-        marker: { line: { color: "rgba(255,0,0,1)", width: 2 } },
+        marker: { line: { color: "rgba(255, 89, 0)", width: 2 } },
         hoverinfo: "skip",
       },
     ];
