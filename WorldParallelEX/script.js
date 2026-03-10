@@ -290,7 +290,8 @@ function drawBubble() {
     xaxis: {title: current_map_metric},
     yaxis: {title: current_scatter_metric},
     paper_bgcolor: PLOT_BG,
-    plot_bgcolor: PLOT_BG
+    plot_bgcolor: PLOT_BG,
+    margin: { t: 50, r: 30, b: 40, l: 50 }
   };
 
   Plotly.react("bubbleDiv", bubbleData, bubbleLayout, {responsive: true}).then(() => {
@@ -405,7 +406,7 @@ function drawParcoords() {
   ];
 
   const parLayout = {
-    margin: { t: 60, r: 30, b: 30, l: 42 },
+    margin: { t: 50, r: 12, b: 20, l: 20 },
     paper_bgcolor: PLOT_BG,
     plot_bgcolor: PLOT_BG,
     font: {
