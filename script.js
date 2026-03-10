@@ -410,7 +410,7 @@ function drawParcoords() {
     paper_bgcolor: PLOT_BG,
     plot_bgcolor: PLOT_BG,
     font: {
-      size: 7   // smaller label size
+      size: 5   // smaller label size
     }
   };
 
