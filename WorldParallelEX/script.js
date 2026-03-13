@@ -178,7 +178,7 @@ function drawScatter() {
       y: yValues,
       text: countries,
       customdata: codes,
-      marker: { size: 6, opacity: 0.8,   color: "rgba(90, 90, 90, 1.0)" }, //ändrade TILL GRÅ
+      marker: { size: 6, opacity: 0.8},
       hovertemplate:
         "<b>%{text}</b><br>" +
         "X: %{x}<br>" +
@@ -282,7 +282,7 @@ function drawBubble() {
     y: yValues,
     text: countries,
     customdata: codes,
-    marker: { size: size, sizemode: "diameter", opacity: 0.8, line: { width: 0.5},color:  "rgba(90, 90, 90, 1.0)" }, // ändrade TILL GRÅ
+    marker: { size: size, sizemode: "diameter", opacity: 0.8, line: { width: 0.5}}, // ändrade TILL GRÅ
     hovertemplate:
       "<b>%{text}</b><br>" + "X: %{x}<br>" + "Y: %{y}<br>" + "Size: %{marker.size}<extra></extra>",
     showlegend: false
@@ -401,7 +401,7 @@ function drawParcoords() {
         cmin: 0,
         cmax: 1,
         colorscale: [
-          [0, "rgba(90, 90, 90, 1.0)"], // default blå ändrade TILL GRÅ
+          [0, "rgba(95, 145, 239, 0.55)"], // default blå ändrade TILL GRÅ
           [0.5, "rgba(255,0,0,1.0)"], // HOVER (röd)
           [1, "rgba(255,0,0,1.0)"],         //
         ],
