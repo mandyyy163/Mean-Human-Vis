@@ -39,6 +39,47 @@
         overflow: hidden;
         min-height: 0;
       }
+       /* enlarge the parallel cooridnate plot button */
+      .expand-btn {
+        position: absolute;
+        top: 0.1px;
+        right: 3px;
+        z-index: 20;
+        width: 19px;
+        height: 19px;
+        border: 1px solid #999;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .expand-btn:hover {
+        background: #fff;
+      }
+      /* show the box on the parallel coordinate plot */
+      .par-panel {
+        position: relative;
+      }
+       /* the panel when expanded */
+      .par-panel.expanded {
+        position: fixed;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        top: calc(62vh); /* The part of the page is should fill */
+        z-index: 9999;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        border-radius: 8px;
+      }
+
+      .par-panel.expanded #parDiv {
+        height: 100%;
+      }
 
       /* The map takes around 50 % height */
       .mapRow {
@@ -216,11 +257,12 @@
             <h3>How does this work?</h3>
             <ul>
               <li><strong>Map</strong><p> Pick a metric to color countries. Use the lasso to select countries; only selected ones show in the plots below.</p></li>
-              <li><strong>Scatter plot</strong><p> X = map attribute, Y = scatter attribute.</p><p>Hover or select on the map or parallel plot to highlight the same country here.</p></li>
+              <li><strong>Scatter plot</strong><p> X = map attribute, Y = scatter attribute.</p><p>Hover or select on the map or bubble chart to highlight the same country here.</p></li>
               <li><strong>Parallel coordinates plot</strong><p> Each line is a country. Drag on an axis to use the brush filtering tool. Filtering here also filters the other plots.</p> </li>
-              <li><strong>Bubble chart</strong><p> X = map attribute, Y = scatter attribute, Z = bubble attribute.</p> </strong></li>
+              <li><strong>Bubble chart</strong><p> X = map attribute, Y = scatter attribute, Z = bubble attribute. Hover or select on the map or scatter plot to highlight the same country here</p> </strong></li>
             </ul>
-            <p>Hovering a country in the map or the scatter plot highlights it in all three.</p>
+            <p>Hovering a country in the map, scatter plot or a bubble in the bubble chart highlights it in all three plots.</p>
+            <p>Double-click anywhere on the map to reset the filters and selection.</p>
             <h3>Data sources</h3>
             <p>The data used in this dashboard was collected from the following sources (hover over link to show more information):</p>
             <ul>
@@ -242,7 +284,10 @@
       <div class="panel">
         <div id="bubbleDiv"></div>
       </div>
-      <div class="panel">
+      <div id="parPanel" class="panel par-panel">
+        <button id="parExpandBtn" class="expand-btn" type="button" title="Enlarge parallel coordinates">
+          ⛶
+        </button>
         <div id="parDiv"></div>
       </div>
     </div>
