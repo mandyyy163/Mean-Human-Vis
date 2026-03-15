@@ -159,6 +159,21 @@
         margin-bottom: 0;
       }
 
+      .reset-btn {
+       width: 100%;
+       padding: 10px 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+      }
+
+      .reset-btn:hover {
+        background: #f3f3f3;
+      }
+
       /* Bottom row takes the other height */
       .bottomRow {
         flex: 1 1 0;
@@ -252,6 +267,9 @@
               <option value="Cost of Living Index">Cost of Living Index</option>
               <option value="Price To Income Ratio">Price To Income Ratio</option>
             </select>
+          </div>
+          <div class="dropdowns">
+            <button id="resetAllBtn" class="reset-btn" type="button">Reset all</button>
           </div>
           <div class="sidebar-guide">
             <h3>How does this work?</h3>
