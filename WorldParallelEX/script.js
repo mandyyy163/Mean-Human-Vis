@@ -821,7 +821,7 @@ function applyPointSelectionFromEvent(ev, codeAccessor) {
       geo: {
         domain: { x: [0, 1], y: [0, 1] },
         scope: "world",
-        projection: { type: "natural earth", scale: 1.55 },
+        projection: { type: "natural earth", scale: 1.1 }, // ändrade detta så att det är utzommad och alla länder syns från start
         lonaxis: { range: [-180, 180] },
         lataxis: { range: [-60, 90] },
         showframe: false,
