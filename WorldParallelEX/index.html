@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Map + Scatter + Parallel</title>
+    <title>Dashboard - Mean Human Vis</title>
 
     <script src="https://cdn.plot.ly/plotly-3.3.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
@@ -110,6 +110,29 @@
         max-height: 100%;
       }
 
+      .sidebar .nav-buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+
+      .sidebar .nav-btn {
+        flex: 1 1 0;
+        padding: 6px 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .sidebar .nav-btn:hover {
+        background: #f3f3f3;
+      }
+
       .sidebar .dropdowns {
         display: flex;
         flex-direction: column;
@@ -214,6 +237,11 @@
           <div id="mapDiv"></div>
         </div>
         <aside class="sidebar">
+          <div class="nav-buttons">
+            <button type="button" onclick="window.location.href='index.html'" class="nav-btn" id="navDashboard">Dashboard</button>
+            <button type="button" onclick="window.location.href='how_to_use.html'" class="nav-btn" id="navHowTo">How to use?</button>
+            <button type="button" onclick="window.location.href='about.html'" class="nav-btn" id="navAbout">About</button>
+          </div>
           <div class="dropdowns">
             <label for="mapMetric">Map attribute</label>
             <select id="mapMetric">

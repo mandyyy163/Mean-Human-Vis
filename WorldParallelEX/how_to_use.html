@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How to use – Mean Human Vis</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+        background: #f4f4f6;
+        color: #222;
+      }
+      .page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 24px 16px 40px;
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+      .page .nav-btn {
+        flex: 0 1 0;
+        padding: 6px 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid #000000;
+        border-radius: 6px;
+        color: #1753d4;
+        background: #b6b6b688;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      h2 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+      .page video {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 8px;
+      }
+      p {
+        margin: 0 0 0.75rem 0;
+        line-height: 1.5;
+      }
+      ul {
+        margin: 0.25rem 0 0.75rem 1.25rem;
+        line-height: 2;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <h1>How to use this dashboard</h1>
+        <button type="button" onclick="window.location.href='index.html'" class="nav-btn" id="navDashboard">Back to dashboard</button>
+      </header>
+
+      <h2>Basic navigation</h2>
+      <ul>
+        <li>Use the dropdowns in the sidebar to choose the map (X), scatter (X, Y), and bubble attributes (X, Y, Z). Each chosen attribute carries over to the other plots.</li>
+        <li>The same items are linked across the map, scatter plot, bubble chart, and parallel coordinates (highlighted when hovered).</li>
+      </ul>
+
+      <h2>Sidebar buttons</h2>
+      <ul>
+        <li><strong>Map:</strong> Select attribute for the map (one-dimensional). This is the X-axis attribute for the scatter plot and bubble chart.</li>
+        <li><strong>Scatter:</strong> Select attribute for the scatter plot's Y-axis. This is also the Y-axis attribute for the bubble chart.</li>
+        <li><strong>Bubble:</strong> Select attribute for the bubble chart's Z-axis. This is the size attribute for the bubble chart.</li>
+        <li><strong>Reset all:</strong> Reset all filters and selection.</li>
+      </ul>
+
+      <h2>Functions</h2>
+      <ul>
+        <li><strong>Selection:</strong> Use the lasso or box tool to select a group of countries. Other countries are greyed out. The parallel coordinates plot has a brush tool to filter the data, try it by clicking anddragging on an axis.</li>
+        <li><strong>Highlighting:</strong> When hovering a country in the map, scatter plot bubble chart, it highlights in all plots.</li>
+        <li><strong>Other plotly tools:</strong> Tools in the top right corner of the plots can be used to zoom, pan, reset the view, etc.</li>
+      </ul>
+
+      <h2>Video on how to use the dashboard</h2>
+      <video controls> <source src="video_guide.mp4" type="video/mp4"> Your browser does not support the video tag. </video> <!-- byt ut till rätt video i src="...", ändra i .page video om formatet är konstigt -->
+    </div>
+  </body>
+</html>
+
