@@ -178,7 +178,7 @@ function drawScatter() {
       y: yValues,
       text: countries,
       customdata: codes,
-      marker: { size: 6, opacity: 0.8},
+      marker: { size: 6, opacity: 0.8, color: "#5d5d5d"},
       hovertemplate:
         "<b>%{text}</b><br>" +
         "X: %{x}<br>" +
@@ -292,7 +292,7 @@ function drawBubble() {
     y: yValues,
     text: countries,
     customdata: codes,
-    marker: { size: size, sizemode: "diameter", opacity: 0.8, line: { width: 0.5}}, // ändrade TILL GRÅ
+    marker: { size: size, sizemode: "diameter", opacity: 0.8, line: { width: 0.1}, color: "#5d5d5d" },
     hovertemplate:
       "<b>%{text}</b><br>" + "X: %{x}<br>" + "Y: %{y}<br>" + "Size: %{marker.size}<extra></extra>",
     showlegend: false

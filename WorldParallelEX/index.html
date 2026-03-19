@@ -8,6 +8,8 @@
     <script src="https://cdn.plot.ly/plotly-3.3.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 
+     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+
     <style>
       :root {
         --panel: #cfcfcf;   /* background gray */
@@ -113,25 +115,32 @@
       .sidebar .nav-buttons {
         display: flex;
         flex-direction: row;
-        gap: 6px;
-        margin-bottom: 8px;
+        justify-content: space-evenly;
+        align-items: center;
       }
 
       .sidebar .nav-btn {
-        flex: 1 1 0;
-        padding: 6px 8px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        background: #fff;
+        width: 36 px;
+        height: 36 px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+
         cursor: pointer;
-        white-space: nowrap;
       }
 
-      .sidebar .nav-btn:hover {
-        background: #f3f3f3;
+      .sidebar .nav-btn:hover .material-symbols-outlined {
+        color: #9e9e9e;
       }
+
+      .sidebar .nav-btn.active .material-symbols-outlined {
+        color: #1753d4;
+}
 
       .sidebar .dropdowns {
         display: flex;
@@ -238,9 +247,15 @@
         </div>
         <aside class="sidebar">
           <div class="nav-buttons">
-            <button type="button" onclick="window.location.href='index.html'" class="nav-btn" id="navDashboard">Dashboard</button>
-            <button type="button" onclick="window.location.href='how_to_use.html'" class="nav-btn" id="navHowTo">How to use?</button>
-            <button type="button" onclick="window.location.href='about.html'" class="nav-btn" id="navAbout">About</button>
+            <button type="button" onclick="window.location.href='index.html'" class="nav-btn" id="navDashboard">
+              <span class="material-symbols-outlined">home</span>
+            </button>
+            <button type="button" onclick="window.location.href='how_to_use.html'" class="nav-btn" id="navHowTo">
+              <span class="material-symbols-outlined">help</span>
+            </button>
+            <button type="button" onclick="window.location.href='about.html'" class="nav-btn" id="navAbout">
+              <span class="material-symbols-outlined">page_info</span>
+            </button>
           </div>
           <div class="dropdowns">
             <label for="mapMetric">Map attribute</label>
