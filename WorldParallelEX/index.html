@@ -23,6 +23,11 @@
         font-family: sans-serif;
       }
 
+      .logo {
+        height: 40px;
+        object-fit: contain;
+      }
+
       .page {
         height: 100vh;
         width: 100vw;
@@ -32,6 +37,13 @@
         padding: 8px;
         box-sizing: border-box;
         background: var(--bg);
+      }
+
+      .topbar {
+        width: 100%;
+        display: flex;
+        padding: 4px 8px;
+        justify-content: flex-start;
       }
 
       .panel {
@@ -241,6 +253,9 @@
 
   <body>
     <div class="page">
+      <div class="topbar">
+        <img src="logo1.png" alt="Mean Human Vis" class="logo">
+      </div>
       <div class="mapRow">
         <div id="mapPanel" class="panel">
           <div id="mapDiv"></div>
