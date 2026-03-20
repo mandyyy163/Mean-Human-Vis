@@ -24,6 +24,27 @@ let hover_code = null; // Hover states
 let selected_codes = null;  // Selection state (lasso on map)
 let parallel_codes = null;   // Brush filter state
 let suppress_par_restyle = false; // Prevent recursion in parcoords restyle
+let par_expanded = false; //added for when parallel coordinate enlarging, false = normal size,  true = enlarged size
+// Function that connects the small zoom/toggle button to the layout change
+function bindParExpandButton() {
+  const btn = document.getElementById("parExpandBtn"); // Get the zoom button element from the HTML
+  const panel = document.getElementById("parPanel"); // Get the parallel plot panels
+  if (!btn || !panel) return;
+  btn.addEventListener("click", () => { // Listen for a click on the zoom button
+    par_expanded = !par_expanded;//Toggle the state
+    panel.classList.toggle("expanded", par_expanded);
+    btn.textContent = par_expanded ? "✕" : "⛶";
+    btn.title = par_expanded ? "Show all plots" : "Show only parallel coordinates";
+    Plotly.relayout("parDiv", {
+      font: {
+        size: par_expanded ? 10 : 5 //change fontsize depending on enlarged or not
+      }
+    });
+    setTimeout(() => { 
+      Plotly.Plots.resize("parDiv");
+    }, 50);
+  });
+}
 // Return the intersection of two Sets (or handle nulls as "no constraint")
 function intersectSets(a, b) {
   if (!a) return b ? new Set(b) : null; // if a is null, result is b 
@@ -157,7 +178,7 @@ function drawScatter() {
       y: yValues,
       text: countries,
       customdata: codes,
-      marker: { size: 6, opacity: 0.8 },
+      marker: { size: 6, opacity: 0.8, color: "#5d5d5d"},
       hovertemplate:
         "<b>%{text}</b><br>" +
         "X: %{x}<br>" +
@@ -193,13 +214,23 @@ function drawScatter() {
     margin: { t: 50, r: 30, b: 40, l: 50 },
     paper_bgcolor: PLOT_BG,
     plot_bgcolor: PLOT_BG,
+    dragmode: "lasso",
   };
-
-  Plotly.react("scatterDiv", scatterData, scatterLayout, { responsive: true }).then(() => {
-    scatter_ready = true;
-    bindScatterHoverHandlers();  // call hover listeners
-    updateScatterHoverOverlay(); // update overlay marker if hover_code already exists
-  });
+  // added a reset all button in each scatter plot
+Plotly.react("scatterDiv",  scatterData, scatterLayout, { responsive: true, modeBarButtonsToAdd: [
+    {
+      name: "Reset all plots",
+      icon: Plotly.Icons.home,
+      click: function() {
+        resetAllFilters();
+      }
+    }
+  ]
+}).then(() => {
+  scatter_ready = true;
+  bindScatterHoverHandlers();  // call hover listeners
+  updateScatterHoverOverlay(); // update overlay marker if hover_code already exists
+});  
 }
 // Update the scatter hover overlay based on hover_code
 function updateScatterHoverOverlay() {
@@ -261,7 +292,7 @@ function drawBubble() {
     y: yValues,
     text: countries,
     customdata: codes,
-    marker: { size: size, sizemode: "diameter", opacity: 0.8, line: { width: 0.5}},
+    marker: { size: size, sizemode: "diameter", opacity: 0.8, line: { width: 0.1}, color: "#5d5d5d" },
     hovertemplate:
       "<b>%{text}</b><br>" + "X: %{x}<br>" + "Y: %{y}<br>" + "Size: %{marker.size}<extra></extra>",
     showlegend: false
@@ -291,14 +322,24 @@ function drawBubble() {
     yaxis: {title: current_scatter_metric},
     paper_bgcolor: PLOT_BG,
     plot_bgcolor: PLOT_BG,
-    margin: { t: 50, r: 30, b: 40, l: 50 }
+    margin: { t: 50, r: 30, b: 40, l: 50 },
+    dragmode: "lasso",
   };
-
-  Plotly.react("bubbleDiv", bubbleData, bubbleLayout, {responsive: true}).then(() => {
-    bubble_ready = true;
-    bindBubbleHoverHandlers();
-    updateBubbleHoverOverlay();
-  });
+// added icon to reset all plot
+Plotly.react("bubbleDiv", bubbleData, bubbleLayout,{ responsive: true, modeBarButtonsToAdd: [
+  {
+    name: "Reset all plots",
+    icon: Plotly.Icons.home,
+    click: function() {
+      resetAllFilters();
+    }
+  }
+]
+}).then(() => {
+  bubble_ready = true;
+  bindBubbleHoverHandlers();
+  updateBubbleHoverOverlay();
+});  
 }
 
 function updateBubbleHoverOverlay() {
@@ -380,7 +421,7 @@ function drawParcoords() {
         cmin: 0,
         cmax: 1,
         colorscale: [
-          [0, "rgba(95, 145, 239, 0.55)"],  // default blå
+          [0, "rgba(95, 145, 239, 0.55)"], // default blå ändrade TILL GRÅ
           [0.5, "rgba(255,0,0,1.0)"], // HOVER (röd)
           [1, "rgba(255,0,0,1.0)"],         //
         ],
@@ -406,11 +447,11 @@ function drawParcoords() {
   ];
 
   const parLayout = {
-    margin: { t: 50, r: 12, b: 20, l: 20 },
+    margin: { t: 50, r: 25, b: 20, l: 33 }, //ändrat margin
     paper_bgcolor: PLOT_BG,
     plot_bgcolor: PLOT_BG,
     font: {
-      size: 5   // smaller label size
+      size: 5
     }
   };
 
@@ -421,6 +462,7 @@ function drawParcoords() {
     updateParcoordsHover();  // call hover highlight if hover_code is already set
   });
 }
+
 
   // Update parcoords line colors based on hover_code
   function updateParcoordsHover() {
@@ -493,6 +535,40 @@ function drawParcoords() {
       drawBubble();
     });
   }
+  // resetAllFilters, update all plots
+  function resetAllFilters() {
+    selected_codes = null;
+    parallel_codes = null;
+    clearHover();
+    if (map_ready) {
+      Plotly.restyle("mapDiv", { selectedpoints: [null] }, [0]);
+    }
+    updateMapFilter();
+    drawScatter();
+    drawBubble();
+    drawParcoords();
+  }
+// Read selected points from scatter/bubble lasso and apply them as the active selection
+function applyPointSelectionFromEvent(ev, codeAccessor) {
+  const pts = ev?.points || [];   // Get selected points from the Plotly selection event
+  // Ignore empty selection events, otherwise plots jump back to full data
+  if (!pts.length) return;
+  const codes = new Set();        // Store selected country codes
+  for (const p of pts) {          // Loop through all selected points
+    // Only use the main trace, not the hover overlay trace
+    if (p?.curveNumber !== 0) continue;
+    const code = codeAccessor(p); // Read the country code from the selected point and Add the code if it exists
+    if (code) codes.add(code);
+  }
+  if (!codes.size) return; 
+  selected_codes = codes;
+  parallel_codes = null;
+  ensureHoverStillValid();        
+  updateMapFilter();              
+  drawScatter();                  
+  drawBubble();                  
+  drawParcoords();
+}
   // Plotly interaction handlers for the map (hover + lasso selection + double-click clear)
   function bindMapHandlers() {
     const mapDiv = document.getElementById("mapDiv");
@@ -533,17 +609,9 @@ function drawParcoords() {
       drawBubble(); // updates bubble 
       drawParcoords(); // update parallel coordinate 
     });
-  
-    // Double click to clear selection filter, go back to orginal map
+    // Double click to clear selection filter, go back to orginal map call resetAllFilter
     mapDiv.on("plotly_doubleclick", () => {
-      selected_codes = null;
-      parallel_codes = null;
-      clearHover();
-      Plotly.restyle("mapDiv", { selectedpoints: [null] }, [0]); // ensure selection fade is fully cleared
-      updateMapFilter();
-      drawScatter();
-      drawBubble();
-      drawParcoords();
+      resetAllFilters();
     });
   }
   // hover handlers for the scatter plot (hover: sync highlight, unhover: clear highlight)
@@ -554,8 +622,9 @@ function drawParcoords() {
     if (scDiv.removeAllListeners) {
       scDiv.removeAllListeners("plotly_hover");
       scDiv.removeAllListeners("plotly_unhover");
+      scDiv.removeAllListeners("plotly_selected");
+      scDiv.removeAllListeners("plotly_doubleclick");
     }
-  
     // Hovering a point in scatter -> read its customdata (Code) and sync hover
     scDiv.on("plotly_hover", (ev) => {
       const code = ev?.points?.[0]?.customdata;
@@ -564,6 +633,12 @@ function drawParcoords() {
     // Leaving hover on scatter: clear hover highlight
     scDiv.on("plotly_unhover", () => {
       clearHover();
+    });
+    scDiv.on("plotly_selected", (ev) => { // When lasso selection is made
+      applyPointSelectionFromEvent(ev, (p) => p?.customdata); // Extract country codes from selected scatter points
+    });
+    scDiv.on("plotly_doubleclick", () => { // When user double-clicks in scatter plot
+      resetAllFilters();
     });
   }
   // hover handlers for parcoords
@@ -595,6 +670,8 @@ function drawParcoords() {
     if (bubDiv.removeAllListeners) {
       bubDiv.removeAllListeners("plotly_hover");
       bubDiv.removeAllListeners("plotly_unhover");
+      bubDiv.removeAllListeners("plotly_selected"); // remove plotly_selected 
+      bubDiv.removeAllListeners("plotly_doubleclick"); //  remove plotly_doubleclick
     }
     bubDiv.on("plotly_hover", (ev) => {
       const code = ev?.points?.[0]?.customdata;
@@ -603,6 +680,12 @@ function drawParcoords() {
 
     bubDiv.on("plotly_unhover", () => {
       clearHover();
+    });
+    bubDiv.on("plotly_selected", (ev) => {  // When user makes a lasso selection
+      applyPointSelectionFromEvent(ev, (p) => p?.customdata); // Read country codes from selected bubbles
+    });
+    bubDiv.on("plotly_doubleclick", () => { // When user double-clicks bubble chart
+      resetAllFilters();
     });
   }
 
@@ -738,7 +821,7 @@ function drawParcoords() {
       geo: {
         domain: { x: [0, 1], y: [0, 1] },
         scope: "world",
-        projection: { type: "natural earth", scale: 1.55 },
+        projection: { type: "natural earth", scale: 1.1 }, // ändrade detta så att det är utzommad och alla länder syns från start
         lonaxis: { range: [-180, 180] },
         lataxis: { range: [-60, 90] },
         showframe: false,
@@ -747,8 +830,17 @@ function drawParcoords() {
         bgcolor: PLOT_BG,
       },
     };
-  
-    Plotly.react("mapDiv", mapData, mapLayout, { responsive: true }).then(() => {
+  // added icon to reset all plot 
+  Plotly.react("mapDiv", mapData, mapLayout, {responsive: true, modeBarButtonsToAdd: [
+    {
+      name: "Reset all plots",
+      icon: Plotly.Icons.home,
+      click: function() {
+        resetAllFilters();
+      }
+    }
+  ]
+}).then(() => {
       map_ready = true;
       bindMapHandlers(); //calling
       updateMapFilter(); 
@@ -786,6 +878,13 @@ function drawParcoords() {
     const mapSelect = document.getElementById("mapMetric");
     const scatterSelect = document.getElementById("scatterMetric");
     const bubbleSelect = document.getElementById("bubbleMetric");
+    const resetAllBtn = document.getElementById("resetAllBtn");
+    // if resetAllBtn is clicked, go back to the orginalplots
+  if (resetAllBtn) {
+    resetAllBtn.addEventListener("click", () => {
+    resetAllFilters();
+  });
+}
     // Get the selected metrics or defaults
     function getSelections() {
       current_map_metric = mapSelect ? mapSelect.value : current_map_metric;
@@ -801,6 +900,7 @@ function drawParcoords() {
     drawScatter();
     drawBubble();
     drawParcoords();
+    bindParExpandButton();
   
     // Dropdown changes
     if (mapSelect) {

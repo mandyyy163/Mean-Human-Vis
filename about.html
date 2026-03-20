@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About – Mean Human Vis</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+        background: #f4f4f6;
+        color: #222;
+      }
+      .page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 24px 16px 40px;
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+      .page .nav-btn {
+        flex: 0 1 0;
+        padding: 6px 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid #000000;
+        border-radius: 6px;
+        color: #1753d4;
+        background: #b6b6b688;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.6rem;
+      }
+      h2 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+      p {
+        margin: 0 0 0.75rem 0;
+        line-height: 1.5;
+      }
+      ul {
+        margin: 0.25rem 0 0.75rem 1.25rem;
+        line-height: 2;
+      }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0.75rem 0 1rem 0;
+        font-size: 0.95rem;
+      }
+      .data-table th,
+      .data-table td {
+        border: 1px solid #cfcfd6;
+        padding: 8px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .data-table thead th {
+        background: #ececf2;
+        font-weight: 700;
+      }
+      .data-table tbody tr:nth-child(even) {
+        background: #f8f8fb;
+      }
+      .table-note {
+        margin-top: 0.4rem;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <h1>About - Mean Human Vis</h1>
+        <button type="button" onclick="window.location.href='index.html'" class="nav-btn" id="navDashboard">Back to dashboard</button>
+      </header>
+
+      <p>
+        This project was created for the course DH2321 Information Visualization VT26, given at KTH Royal Institute of Technology. The project explores interactive visualization of country-level health-, bio-, and socioeconomic attributes. The project was created to support users who want to compare countries or regions, and explore relationships between variables through complementary tools of visualization.
+        The dashboard supports several core analytical tasks like:
+        <ul>
+          <li>comparing countries across multiple attributes</li>
+          <li>identifying outliers and patterns</li>
+          <li>exploring relationships between variables and geographical regions</li>
+          <li>filtering and selecting subsets of data</li>
+        </ul>
+      </p>
+
+      <h2>The team</h2>
+        <p>We are three master students at KTH, Stockholm. Though we were all involved and worked on all parts of the project because of our smaller team size, we each had our own main areas of focus.</p>
+        <ul>
+          <li><strong>Amanda Falk, amafal@kth.se</strong> - what we spent most of our time on.</li>
+          <li><strong>Melissa Saber Tehrani, melst@kth.se</strong> - Frontend design & implementation.</li>
+          <li><strong>Anton Wennmark, antwen@kth.se</strong> - Data preprocessing, data handling logic, and frontend design & implementation.</li>
+        </ul>
+      
+        <h2>The data</h2>
+        <p>The dataset used in the dashboard was compiled from multiple publicly available sources (see table). These were selected to generate a final dataset that enables meaningful comparisons and that offers data across multiple categories.</p>
+        <p>The datasets collected contain different data from different years, though they’re not separated by a huge number. The table below shows how we handled the data before converting them to one final, common sheet in Excel. For all datasets, a year was chosen and at least one attribute (column) was extracted together with its corresponding country name and ISO code, all other data not used was left behind (including geographical region means). Using Excel, these separate sheets were then merged by using XLOOKUP, matching the country codes.</p>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name of dataset</th>
+              <th>Author(s)</th>
+              <th>Description</th>
+              <th>Original size (# of countries)</th>
+              <th>Year(s) used</th>
+              <th>Attributes extracted</th>
+              <th>Downloaded from</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mean adult height by year of birth, males vs. females, 1996</td>
+              <td>NCD RisC, Human Height (2017) – processed by Our World in Data</td>
+              <td>Mean height of men and women aged 18 or older by birth year, extending from 1896 to 1996.</td>
+              <td>21009 rows (208)</td>
+              <td>1987-1996</td>
+              <td>Entity, Code, Mean male height (cm), Mean female height (cm)</td>
+              <td><a href="https://ourworldindata.org/human-height" target="_blank" rel="noopener" title="Mean male height">Our World in Data (1)</a></td>
+            </tr>
+            <tr>
+              <td>Mean body mass index (BMI) in men, 2016</td>
+              <td>World Health Organization - Global Health Observatory (2025) – processed by Our World in Data</td>
+              <td>Mean body mass index (BMI) in kg/m2 of defined population.</td>
+              <td>8249 rows (198)</td>
+              <td>2016</td>
+              <td>Entity, Code, Mean BMI (kg/m²) (age-standardized estimate) - Sex: male - Age group: 18+  years of age</td>
+              <td><a href="https://ourworldindata.org/grapher/mean-body-mass-index-bmi-in-adult-males" target="_blank" rel="noopener" title="Mean male BMI">Our World in Data (2)</a></td>
+            </tr>
+            <tr>
+              <td>Mean body mass index (BMI) in women, 2016</td>
+              <td>World Health Organization - Global Health Observatory (2025) – processed by Our World in Data</td>
+              <td>Mean body mass index (BMI) in kg/m2 of defined population.</td>
+              <td>8250 rows (198)</td>
+              <td>2016</td>
+              <td>Entity, Code, Mean BMI (kg/m²)</td>
+              <td><a href="https://ourworldindata.org/grapher/mean-body-mass-index-bmi-in-adult-women" target="_blank" rel="noopener" title="Mean male BMI">Our World in Data (3)</a></td>
+            </tr>
+            <tr>
+              <td>Cost of Living Index by Country 2026</td>
+              <td>Numbeo.com</td>
+              <td>This index measures the NYC relative prices of consumer goods and services—including groceries, dining, transportation, and utilities—but excludes housing costs like rent or mortgage payments. Crowd-sourced global statistics.</td>
+              <td>156 rows (155)</td>
+              <td>2026</td>
+              <td>Country*, Cost of Living Index</td>
+              <td><a href="https://www.numbeo.com/cost-of-living/rankings_by_country.jsp" target="_blank" rel="noopener" title="Mean male BMI">Numbeo (1)</a></td>
+            </tr>
+            <tr>
+              <td>Property Prices Index by Country 2026</td>
+              <td>Numbeo.com</td>
+              <td>Price to Income Ratio is a fundamental measure for apartment purchase affordability, where a lower ratio indicates better affordability. Crowd-sourced global statistics.</td>
+              <td>113 rows (112)</td>
+              <td>2026</td>
+              <td>Country*, Price to income ratio</td>
+              <td><a href="https://www.numbeo.com/property-investment/rankings_by_country.jsp" target="_blank" rel="noopener" title="Mean male BMI">Numbeo (2)</a></td>
+            </tr>
+            <tr>
+              <td>World health statistics 2025: monitoring health for the SDGs, sustainable development goals</td>
+              <td>World Health Organization, Data, Analytics & Delivery for impact (DDI) Team</td>
+              <td>The World health statistics report is the annual compilation of health and health-related indicators, which has been published by the World Health Organization since 2005. </td>
+              <td>9000 rows (205)</td>
+              <td>2015-2023 (latest available used for all entries)</td>
+              <td>Location, LocationCode, Numeric Value (Road traffic mortality rate (per 100 000 population), Life expectancy at birth (years), Mortality rate due to homicide (per 100 000 population), Total alcohol per capita (≥ 15 years of age) consumption (litres of pure alcohol), Density of medical doctors (per 10 000 population), Age-standardized prevalence of tobacco use among persons 15 years and older  (%))</td>
+              <td><a href="https://www.who.int/publications/i/item/9789240110496" target="_blank" rel="noopener" title="Mean male BMI">WHO</a></td>
+            </tr>
+            <tr>
+              <td>World Happiness Report 2026 – data for Figure 2.1</td>
+              <td>Helliwell, J. F., Layard, R., Sachs, J. D., De Neve, J.-E., Aknin, L. B., & Wang, S. (Eds.). (2026). World Happiness Report 2026. University of Oxford: Wellbeing Research Centre.</td>
+              <td>The three-year averages for life evaluation from 2012 onwards, The 95% confidence intervals for those averages, The contributions of the six explanatory factors. Powered by data from the Gallup World Poll</td>
+              <td>1970 rows (147)</td>
+              <td>2024</td>
+              <td>Country name*, Life evaluative (3-year average)</td>
+              <td><a href="https://www.worldhappiness.report/data-sharing/ " target="_blank" rel="noopener" title="Mean male BMI">World Happiness Report (Download data for Figure 2.1)</a></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="table-note">
+          * In some cases, ISO country codes were added manually to enable XLOOKUP functionality in Excel.
+        </p>
+        <p>In the “Mean adult height by year of birth, males vs. females, 1996” dataset, we chose to calculate each country’s mean value between the years 1987-96 for both genders for a balanced representation. </p>
+
+        <h2>The missing data</h2>
+        <p> As the datasets are of different size, not all countries appear across all datasets. Missing data is assigned as null or NaN in the plotly drawing functions. If a missing attribute is chosen it appears as greyed out countries (choropleth map), not at all (scatter plot, bubble chart), or as lines dipping outside of the frame in the parallel coordinates plot (PCP). As there was no way to change the nature of the lines in plotly’s PCP to present missing data, the lines appear to go outside of the PCP frame. It does not adjust the axes for these attributes so the missing data are in these cases distinguishable. In other cases were the axes show values around 0, the lines will still appear visible, however, will still act as a missing value when using the brush tool.</p>
+
+        <h2>The technology</h2>
+        <p></p>Data processing & handling:</p>
+        <ul>
+          <li>Microsoft Excel</li>
+          <li><a href="https://d3js.org" target="_blank" rel="noopener" title="D3.js">D3.js</a></li>
+        </ul>
+        <p>Frontend & Core technologies:</p>
+        <ul>
+          <li>HTML & CSS</li>
+          <li>JavaScript</li>
+        </ul>
+        <p>Visualization:</p>
+        <ul>
+          <li><a href="https://plotly.com/javascript/" target="_blank" rel="noopener" title="Plotly.js">Plotly.js</a></li>
+        </ul>
+
+        <h2>The source code</h2>
+        <p>The source code and csv data set for this project is available on <a href="https://github.com/mandyyy163/Mean-Human-Vis/tree/master" target="_blank" rel="noopener" title="Mean Human Vis GitHub">GitHub</a>.</p>
+
+        <h2>The references</h2>
+
+          <p></p>Data sources:</p>
+          <ul>
+            <li><a href="https://ourworldindata.org/" target="_blank" rel="noopener" title="Our World in Data">Our World in Data</a></li>
+            <li><a href="https://www.worldhappiness.report/" target="_blank" rel="noopener" title="World Happiness Report">World Happiness Report</a></li>
+            <li><a href="https://www.numbeo.com/cost-of-living/" target="_blank" rel="noopener" title="Numbeo">Numbeo</a></li>
+            <li><a href="https://www.who.int/data" target="_blank" rel="noopener" title="World Health Organization">World Health Organization</a></li>
+          </ul>
+          <p>Libraries:</p>
+          <ul>
+            <li><a href="https://plotly.com/javascript/" target="_blank" rel="noopener" title="Plotly.js">Plotly.js</a></li>
+            <li><a href="https://d3js.org" target="_blank" rel="noopener" title="D3.js">D3.js</a></li>
+          </ul>
+    </div>
+  </body>
+</html>
+

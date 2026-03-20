@@ -3,10 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Map + Scatter + Parallel</title>
+    <title>Dashboard - Mean Human Vis</title>
 
     <script src="https://cdn.plot.ly/plotly-3.3.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+
+     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 
     <style>
       :root {
@@ -21,6 +23,11 @@
         font-family: sans-serif;
       }
 
+      .logo {
+        height: 40px;
+        object-fit: contain;
+      }
+
       .page {
         height: 100vh;
         width: 100vw;
@@ -32,12 +39,60 @@
         background: var(--bg);
       }
 
+      .topbar {
+        width: 100%;
+        display: flex;
+        padding: 4px 8px;
+        justify-content: flex-start;
+      }
+
       .panel {
         background: var(--panel);
         border: 1px solid var(--border);
         border-radius: 8px;
         overflow: hidden;
         min-height: 0;
+      }
+       /* enlarge the parallel cooridnate plot button */
+      .expand-btn {
+        position: absolute;
+        top: 0.1px;
+        right: 3px;
+        z-index: 20;
+        width: 19px;
+        height: 19px;
+        border: 1px solid #999;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .expand-btn:hover {
+        background: #fff;
+      }
+      /* show the box on the parallel coordinate plot */
+      .par-panel {
+        position: relative;
+      }
+       /* the panel when expanded */
+      .par-panel.expanded {
+        position: fixed;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        top: calc(62vh); /* The part of the page is should fill */
+        z-index: 9999;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        border-radius: 8px;
+      }
+
+      .par-panel.expanded #parDiv {
+        height: 100%;
       }
 
       /* The map takes around 50 % height */
@@ -68,6 +123,36 @@
         overflow-y: auto;
         max-height: 100%;
       }
+
+      .sidebar .nav-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+
+      .sidebar .nav-btn {
+        width: 36 px;
+        height: 36 px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+
+        cursor: pointer;
+      }
+
+      .sidebar .nav-btn:hover .material-symbols-outlined {
+        color: #9e9e9e;
+      }
+
+      .sidebar .nav-btn.active .material-symbols-outlined {
+        color: #1753d4;
+}
 
       .sidebar .dropdowns {
         display: flex;
@@ -118,6 +203,21 @@
         margin-bottom: 0;
       }
 
+      .reset-btn {
+       width: 100%;
+       padding: 10px 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+      }
+
+      .reset-btn:hover {
+        background: #f3f3f3;
+      }
+
       /* Bottom row takes the other height */
       .bottomRow {
         flex: 1 1 0;
@@ -153,11 +253,25 @@
 
   <body>
     <div class="page">
+      <div class="topbar">
+        <img src="logo1.png" alt="Mean Human Vis" class="logo">
+      </div>
       <div class="mapRow">
         <div id="mapPanel" class="panel">
           <div id="mapDiv"></div>
         </div>
         <aside class="sidebar">
+          <div class="nav-buttons">
+            <button type="button" onclick="window.location.href='index.html'" class="nav-btn" id="navDashboard">
+              <span class="material-symbols-outlined">home</span>
+            </button>
+            <button type="button" onclick="window.location.href='how_to_use.html'" class="nav-btn" id="navHowTo">
+              <span class="material-symbols-outlined">help</span>
+            </button>
+            <button type="button" onclick="window.location.href='about.html'" class="nav-btn" id="navAbout">
+              <span class="material-symbols-outlined">page_info</span>
+            </button>
+          </div>
           <div class="dropdowns">
             <label for="mapMetric">Map attribute</label>
             <select id="mapMetric">
@@ -212,26 +326,8 @@
               <option value="Price To Income Ratio">Price To Income Ratio</option>
             </select>
           </div>
-          <div class="sidebar-guide">
-            <h3>How does this work?</h3>
-            <ul>
-              <li><strong>Map</strong><p> Pick a metric to color countries. Use the lasso to select countries; only selected ones show in the plots below.</p></li>
-              <li><strong>Scatter plot</strong><p> X = map attribute, Y = scatter attribute.</p><p>Hover or select on the map or bubble chart to highlight the same country here.</p></li>
-              <li><strong>Parallel coordinates plot</strong><p> Each line is a country. Drag on an axis to use the brush filtering tool. Filtering here also filters the other plots.</p> </li>
-              <li><strong>Bubble chart</strong><p> X = map attribute, Y = scatter attribute, Z = bubble attribute. Hover or select on the map or scatter plot to highlight the same country here</p> </strong></li>
-            </ul>
-            <p>Hovering a country in the map, scatter plot or a bubble in the bubble chart highlights it in all three plots.</p>
-            <p>Double-click anywhere on the map to reset the filters and selection.</p>
-            <h3>Data sources</h3>
-            <p>The data used in this dashboard was collected from the following sources (hover over link to show more information):</p>
-            <ul>
-              <li><a href="https://ourworldindata.org/human-height" target="_blank" rel="noopener" title="Mean male height, Mean female height">Our World in Data (1)</a></li>
-              <li><a href="https://ourworldindata.org/grapher/mean-body-mass-index-bmi-in-adult-males" target="_blank" rel="noopener" title="Mean male BMI">Our World in Data (2)</a></li>
-              <li><a href="https://ourworldindata.org/grapher/mean-body-mass-index-bmi-in-adult-women" target="_blank" rel="noopener" title="Mean female BMI">Our World in Data (3)</a></li>
-              <li><a href="https://www.who.int/data/gho/whs-annex" target="_blank" rel="noopener" title="Life expectancy at birth, Road traffic mortality rate, Mortality rate due to homicide, Total alcohol per capita (more 15 years of age) consumption (litres of pure alcohol), Density of medical doctors, Age-standardized prevalence of tobacco use among persons 15 years and older">World Health Organization</a></li>
-              <li><a href="https://www.worldhappiness.report/data-sharing/" target="_blank" rel="noopener" title="Happiness - Life evaluation (3-year average)">World Happiness Report</a></li>
-              <li><a href="https://www.numbeo.com/" target="_blank" rel="noopener" title="Cost of Living Index and Price To Income Ratio (2026)">Numbeo</a></li>
-            </ul>
+          <div class="dropdowns">
+            <button id="resetAllBtn" class="reset-btn" type="button">Reset all</button>
           </div>
         </aside>
       </div>
@@ -243,7 +339,10 @@
       <div class="panel">
         <div id="bubbleDiv"></div>
       </div>
-      <div class="panel">
+      <div id="parPanel" class="panel par-panel">
+        <button id="parExpandBtn" class="expand-btn" type="button" title="Enlarge parallel coordinates">
+          ⛶
+        </button>
         <div id="parDiv"></div>
       </div>
     </div>
