@@ -23,6 +23,32 @@
         font-family: sans-serif;
       }
 
+      .nav-btn {
+      position: relative;
+    }
+
+    /*Toolpit bubbla*/
+      .nav-btn::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        top: 110%; /* Placerar inforutan under knappen */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        visibility: hidden;
+        transition: opacity 0.2s;
+        z-index: 1000;
+      }
+
+      .nav-btn:hover::after {
+        opacity: 1;
+        visibility: visible;
+      }
       .logo {
         height: 40px;
         object-fit: contain;
@@ -262,13 +288,13 @@
         </div>
         <aside class="sidebar">
           <div class="nav-buttons">
-            <button type="button" onclick="window.location.href='index.html'" class="nav-btn" id="navDashboard">
+            <button type="button" onclick="window.location.href='index.html'" class="nav-btn" id="navDashboard" data-tooltip="Home">
               <span class="material-symbols-outlined">home</span>
             </button>
-            <button type="button" onclick="window.location.href='how_to_use.html'" class="nav-btn" id="navHowTo">
+            <button type="button" onclick="window.location.href='how_to_use.html'" class="nav-btn" id="navHowTo" data-tooltip="How to use">
               <span class="material-symbols-outlined">help</span>
             </button>
-            <button type="button" onclick="window.location.href='about.html'" class="nav-btn" id="navAbout">
+            <button type="button" onclick="window.location.href='about.html'" class="nav-btn" id="navAbout" data-tooltip="About">
               <span class="material-symbols-outlined">page_info</span>
             </button>
           </div>
