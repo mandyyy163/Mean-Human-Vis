@@ -208,25 +208,22 @@ function drawScatter() {
   ];
 
   const scatterLayout = {
-    title: { text: "Y: " + current_scatter_metric + " / X: " + current_map_metric, font: { size: 14 } },
-    xaxis: { title: current_map_metric },
-    yaxis: { title: current_scatter_metric },
+    title: { text: "Y: " + current_scatter_metric + " / X: " + current_map_metric, font: { size: 11 } },
+    xaxis: { title: current_map_metric},
+    yaxis: { title: current_scatter_metric},
     margin: { t: 50, r: 30, b: 40, l: 50 },
     paper_bgcolor: PLOT_BG,
     plot_bgcolor: PLOT_BG,
     dragmode: "lasso",
   };
+
+  const scatterConfig = {
+    responsive: true,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['zoom2d', 'resetScale2d', 'toImage', 'autoScale2d']
+  }
   // added a reset all button in each scatter plot
-Plotly.react("scatterDiv",  scatterData, scatterLayout, { responsive: true, modeBarButtonsToAdd: [
-    {
-      name: "Reset all plots",
-      icon: Plotly.Icons.home,
-      click: function() {
-        resetAllFilters();
-      }
-    }
-  ]
-}).then(() => {
+Plotly.react("scatterDiv",  scatterData, scatterLayout, scatterConfig).then(() => {
   scatter_ready = true;
   bindScatterHoverHandlers();  // call hover listeners
   updateScatterHoverOverlay(); // update overlay marker if hover_code already exists
@@ -317,25 +314,22 @@ function drawBubble() {
   ];
 
   const bubbleLayout = {
-    title: {text: "Y: " + current_scatter_metric + " / X: " + current_map_metric, font: {size: 12}},
-    xaxis: {title: current_map_metric},
-    yaxis: {title: current_scatter_metric},
+    title: {text: "Y: " + current_scatter_metric + " / X: " + current_map_metric, font: {size: 11}},
+    xaxis: { title: current_map_metric},
+    yaxis: { title: current_scatter_metric},
     paper_bgcolor: PLOT_BG,
     plot_bgcolor: PLOT_BG,
     margin: { t: 50, r: 30, b: 40, l: 50 },
     dragmode: "lasso",
   };
-// added icon to reset all plot
-Plotly.react("bubbleDiv", bubbleData, bubbleLayout,{ responsive: true, modeBarButtonsToAdd: [
-  {
-    name: "Reset all plots",
-    icon: Plotly.Icons.home,
-    click: function() {
-      resetAllFilters();
-    }
+
+  const bubbleConfig = {
+    responsive: true,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['zoom2d', 'resetScale2d', 'toImage', 'autoScale2d']
   }
-]
-}).then(() => {
+// added icon to reset all plot
+Plotly.react("bubbleDiv", bubbleData, bubbleLayout, bubbleConfig).then(() => {
   bubble_ready = true;
   bindBubbleHoverHandlers();
   updateBubbleHoverOverlay();
@@ -455,7 +449,13 @@ function drawParcoords() {
     }
   };
 
-  Plotly.react("parDiv", parData, parLayout, { responsive: true }).then(() => {
+  const parConfig = {
+    responsive: true,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['toImage']
+  };
+
+  Plotly.react("parDiv", parData, parLayout, parConfig).then(() => {
     par_ready = true;
     bindParcoordsHoverHandlers(); // call hover listeners
     bindParcoordsBrushHandler(); // call brush listeners
@@ -830,17 +830,14 @@ function applyPointSelectionFromEvent(ev, codeAccessor) {
         bgcolor: PLOT_BG,
       },
     };
+
+    const mapConfig = {
+        responsive: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: ['resetGeo', 'toImage', ]
+    };
   // added icon to reset all plot 
-  Plotly.react("mapDiv", mapData, mapLayout, {responsive: true, modeBarButtonsToAdd: [
-    {
-      name: "Reset all plots",
-      icon: Plotly.Icons.home,
-      click: function() {
-        resetAllFilters();
-      }
-    }
-  ]
-}).then(() => {
+  Plotly.react("mapDiv", mapData, mapLayout, mapConfig).then(() => {
       map_ready = true;
       bindMapHandlers(); //calling
       updateMapFilter(); 
